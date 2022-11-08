@@ -3,7 +3,7 @@ let array = []
 fetch('./words.txt')
   .then(response => response.text())
   .then(text => {
-    array = text.split("\r\n");
+    array = text.split("\n");
     anagrams(input2)
     anagrams(input4)
   })
@@ -18,7 +18,19 @@ function anagrams(input) {
       });
       console.log(wordsForTheAnagram)
       let arrayInput = [...input]
-      console.log(arrayInput)
+      console.log(arrayInput.toString().replaceAll(',',''))
+      function findAnagrams( ) {
+        let arrayOfAnagrams = [ ]
+        arrayOfAnagrams = wordsForTheAnagram.find(element => {
+          let wordsInAnagram = new RegExp('[' + arrayInput.toString().replaceAll(',','') + ']');
+          return wordsInAnagram.test(element)
+        });
+        // let lastWord = arrayOfAnagrams.pop()
+        
+        console.log(arrayOfAnagrams)
+      }
+
+      findAnagrams()
 
     } else {
       console.log(`(${input}) - Expressão invalida, deve conter uma frase ou uma palavra`)
