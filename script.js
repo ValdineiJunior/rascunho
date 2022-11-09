@@ -19,25 +19,51 @@ function anagrams(input) {
       console.log(wordsForTheAnagram)
       let arrayInput = [...input]
       console.log(arrayInput.toString().replaceAll(',',''))
+      let arrayAnagram = []
+      let indexFirstWord = 0
+      let indexToCut = []
       function findAnagrams( ) {
-        let arrayOfAnagrams = [ ]
-        arrayOfAnagrams = wordsForTheAnagram.find(element => {
+        let anagram = wordsForTheAnagram.find(element => {
           let wordsInAnagram = new RegExp('[' + arrayInput.toString().replaceAll(',','') + ']');
           return wordsInAnagram.test(element)
         });
-        // let lastWord = arrayOfAnagrams.pop()
+        indexFirstWord = wordsForTheAnagram.findIndex(element => element === anagram )
+        indexToCut.push(indexFirstWord)
+        arrayAnagram.push(anagram)
         
-        console.log(arrayOfAnagrams)
+        let arrayCharIntoAnagram = [...anagram]
+        for (let index = 0; index < arrayCharIntoAnagram.length; index++) {
+          const elementInAnagram = arrayCharIntoAnagram[index];
+          const indexChar = arrayInput.findIndex(element => element === elementInAnagram)
+          if (indexChar == -1) {
+            return
+          } else {
+            arrayInput.splice(indexChar,1)
+            console.log(indexFirstWord)
+            console.log(arrayAnagram)
+          }
+        }
+        if (arrayInput.length > 0) {
+          findAnagrams()
+        }
+
       }
 
       findAnagrams()
+      while (wordsForTheAnagram.length > 0) {
+        wordsForTheAnagram = wordsForTheAnagram.slice(indexToCut[0]+1)
+        console.log(wordsForTheAnagram)
+        findAnagrams()
+        
+      }
+
 
     } else {
       console.log(`(${input}) - Expressão invalida, deve conter uma frase ou uma palavra`)
     }
 }
 
-let input2 = 'vermelho'
+let input2 = 'volvo'
 let input4 = 'oi gente'
 
 // readFile no node
