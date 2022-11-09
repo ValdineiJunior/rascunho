@@ -20,15 +20,14 @@ function anagrams(input) {
       let arrayInput = [...input]
       console.log(arrayInput.toString().replaceAll(',',''))
       let arrayAnagram = []
-      let indexFirstWord = 0
-      let indexToCut = []
       function findAnagrams( ) {
         let anagram = wordsForTheAnagram.find(element => {
           let wordsInAnagram = new RegExp('[' + arrayInput.toString().replaceAll(',','') + ']');
           return wordsInAnagram.test(element)
         });
-        indexFirstWord = wordsForTheAnagram.findIndex(element => element === anagram )
-        indexToCut.push(indexFirstWord)
+        if (anagram === undefined ) {
+          return
+        }
         arrayAnagram.push(anagram)
         
         let arrayCharIntoAnagram = [...anagram]
@@ -39,24 +38,22 @@ function anagrams(input) {
             return
           } else {
             arrayInput.splice(indexChar,1)
-            console.log(indexFirstWord)
-            console.log(arrayAnagram)
           }
-        }
-        if (arrayInput.length > 0) {
-          findAnagrams()
-        }
+          if (arrayInput.length == 0) {
+            console.log(arrayAnagram)
+            findAnagrams()
+          }
+        }    
 
       }
 
       findAnagrams()
       while (wordsForTheAnagram.length > 0) {
-        wordsForTheAnagram = wordsForTheAnagram.slice(indexToCut[0]+1)
-        console.log(wordsForTheAnagram)
+        wordsForTheAnagram = wordsForTheAnagram.slice(1)
+        arrayAnagram = []
         findAnagrams()
-        
       }
-
+      
 
     } else {
       console.log(`(${input}) - Expressão invalida, deve conter uma frase ou uma palavra`)
