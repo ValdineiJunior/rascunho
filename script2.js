@@ -7,9 +7,11 @@ fetch('./words.txt')
     let newInput = changeInput(input2)
     let wordsForTheAnagram2 = filterAnagram(newInput)
     isValidInput(newInput)
-    // console.log(cutWords('VERMELHO','ELM'))
-    console.log(findAnagrams(newInput,wordsForTheAnagram2))
-    verifyWord(wordsForTheAnagram2, newInput)
+    for (let index = 0; index < wordsForTheAnagram2.length; index++) {
+      verifyWord(wordsForTheAnagram2, newInput)
+      wordsForTheAnagram2 = wordsForTheAnagram2.slice(index)
+      
+    }  
   })
 
 function changeInput(input) {
@@ -38,7 +40,7 @@ function isValidInput(newInput) {
 
 
 function cutWords(entrada, retirada) {
-  if (entrada) {
+  if (entrada && retirada) {
     let arrayEntrada = [...entrada]
     let arrayRetirada = [...retirada]
     for (let index = 0; index < arrayRetirada.length; index++) {
@@ -56,71 +58,46 @@ function cutWords(entrada, retirada) {
   }
 }
 
-function verifyWord(wordsForTheAnagram2, newInput) {
-  let inputToIterable = newInput
-  let arrayResposta = []
-  for (let index = 0; index < wordsForTheAnagram2.length; index++) {
-    const element = wordsForTheAnagram2[index];
-    let verificador = findAnagrams(inputToIterable,wordsForTheAnagram2)
-    console.log(verificador)
-    if (verificador) {
-      arrayResposta.push(element)
-      inputToIterable = cutWords(inputToIterable,element)
-      if (inputToIterable.length === 0) {
-        console.log(arrayResposta)
-      }
-    } else {
 
+
+function verifyWord(wordsForTheAnagram2, newInput) {
+  let arrayResposta = []
+  let words = wordsForTheAnagram2
+  let inputToIterable = newInput
+
+  if (inputToIterable.length == 0) {
+    console.log(arrayResposta)
+  } else {
+    let nextword = words.find(element => findAnagrams(element,inputToIterable))
+    if (inputToIterable.length == nextword.length) {
+      arrayResposta.push(words.find(element => findAnagrams(element,inputToIterable)))
+    } else {
+      arrayResposta.push(words.find(element => findAnagrams(element,inputToIterable)))
+      let verificando = cutWords(inputToIterable,arrayResposta[arrayResposta.length-1])
+      
+      if (verificando == undefined) {
+        arrayResposta.pop()
+        let arrayIndex = (words.findIndex(element => findAnagrams(element,inputToIterable)))
+        words = words.slice(arrayIndex+1)
+        verifyWord(words,inputToIterable) 
+      } else {
+          inputToIterable = cutWords(inputToIterable,arrayResposta[arrayResposta.length-1])
+          verifyWord(words,inputToIterable)
+        }  
+       
     }
   }
+  // console.log(words)
+  // console.log(arrayResposta)
 }
 
 function findAnagrams(newInput,wordsForTheAnagram2) {
 
   if(newInput) {
-    let wordsInAnagram = new RegExp('[' + newInput + ']');
-    console.log(wordsInAnagram)
+    let wordsInAnagram = new RegExp('[' + newInput + ']+');
     return wordsInAnagram.test(wordsForTheAnagram2)
   }
 }
-
-function cutArray(entradas, index) {
-  
-}
-
-// function findAnagrams(wordsForTheAnagram, newInput) {
-//   let arrayInput = [...newInput]
-//   let arrayAnagram = []
-//   let anagramIndex = wordsForTheAnagram.findIndex(element => {
-//     let wordsInAnagram = new RegExp('[' + arrayInput.toString().replaceAll(',','') + ']');
-//     return wordsInAnagram.test(element)
-//   });
-//   if (anagramIndex === -1 ) {
-//     return
-//   }
-//   arrayAnagram.push(wordsForTheAnagram[anagramIndex])
-//   let arrayCharIntoAnagram = [...wordsForTheAnagram[anagramIndex]]
-//   let retirados = []
-//   let arrayRetirados = []
-//   for (let index = 0; index < arrayCharIntoAnagram.length; index++) {
-//     const elementInAnagram = arrayCharIntoAnagram[index];
-//     const indexChar = arrayInput.findIndex(elemento => elemento === elementInAnagram)
-//     if (indexChar == -1) {
-//       arrayInput.push(arrayRetirados)
-//       return
-//     } else {
-//       retirados = arrayInput.splice(indexChar,1)
-//       arrayRetirados.push(retirados[0])
-//       console.log(arrayInput)
-//     }
-//     if (arrayInput.length == 0) {
-//       console.log(arrayAnagram)
-//     } else {
-//       newWordsForTheAnagram = wordsForTheAnagram.slice(anagramIndex+1)
-//     }
-//   }    
-
-// }
 
 let input2 = 'vermelho'
 let input4 = 'oi gente'
