@@ -1,41 +1,44 @@
-let array = []
+let wordArray = []
 
 fetch('./words.txt')
   .then(response => response.text())
   .then(text => {
-    array = text.split("\r\n");
-    let newInput = changeInput(input2)
-    let wordsForTheAnagram2 = filterAnagram(newInput)
-    isValidInput(newInput)
-    for (let index = 0; index < wordsForTheAnagram2.length; index++) {
-      verifyWord(wordsForTheAnagram2, newInput)
-      wordsForTheAnagram2 = wordsForTheAnagram2.slice(index)
-      
+    wordArray = text.split("\r\n");
+    let formattedInput = changingInputToCorrectFormat(input)
+    let filteredArray = filteringArrayForWordsThatFitTheAnagram(formattedInput)
+    let inputIsValid = checksIfTheInputIsValid(formattedInput)
+    if (inputIsValid == false) {
+      console.log(`(${formattedInput}) - Expressão invalida, deve conter uma frase ou uma palavra, não permitido caracteres especiais.`)
+      return
+    }
+    console.log(formattedInput)
+    console.log(filteredArray)
+    for (let index = 0; index < filteredArray.length; index++) {
+      verifyWord(filteredArray, formattedInput)
+      filteredArray = filteredArray.slice(index)
     }  
   })
 
-function changeInput(input) {
+function changingInputToCorrectFormat(input) {
   return input = input.replace(' ','').toUpperCase()
 }
 
-function filterAnagram(newInput) {
-  let wordsForTheAnagram = array.filter(element => {
-    let wordsFitInAnagram = new RegExp('[^' + newInput + ']');
+function filteringArrayForWordsThatFitTheAnagram(formattedInput) {
+  let wordsForTheAnagram = wordArray.filter(element => {
+    let wordsFitInAnagram = new RegExp('[^' + formattedInput + ']');
     return !wordsFitInAnagram.test(element)
   });
   return wordsForTheAnagram
 }
 
-function isValidInput(newInput) {
-    
-    let inputWithValidCharacters = !(/\W/g.test(newInput))
-    let inputContainsAtLeastOnePhraseOrWord = newInput.length != 0
-    if (inputWithValidCharacters && inputContainsAtLeastOnePhraseOrWord) {
-      filterAnagram(newInput)
-
-    } else {
-      console.log(`(${newInput}) - Expressão invalida, deve conter uma frase ou uma palavra, não permitido caracteres especiais.`)
-    }
+function checksIfTheInputIsValid(formattedInput) {
+  let inputWithValidCharacters = !(/\W/g.test(formattedInput))
+  let inputContainsAtLeastOnePhraseOrWord = formattedInput.length != 0
+  if (inputWithValidCharacters && inputContainsAtLeastOnePhraseOrWord) {
+    return true
+  } else {
+    return false 
+  }
 }
 
 
@@ -55,15 +58,16 @@ function cutWords(entrada, retirada) {
       }
     }
     return arrayEntrada
+  } else {
+    console.log("problemas nos parametros de entrada")
   }
 }
 
 
-
-function verifyWord(wordsForTheAnagram2, newInput) {
+function verifyWord(filteredArray, formattedInput) {
   let arrayResposta = []
-  let words = wordsForTheAnagram2
-  let inputToIterable = newInput
+  let words = filteredArray
+  let inputToIterable = formattedInput
 
   if (inputToIterable.length == 0) {
     console.log(arrayResposta)
@@ -91,15 +95,15 @@ function verifyWord(wordsForTheAnagram2, newInput) {
   // console.log(arrayResposta)
 }
 
-function findAnagrams(newInput,wordsForTheAnagram2) {
+function findAnagrams(formattedInput,filteredArray) {
 
-  if(newInput) {
-    let wordsInAnagram = new RegExp('[' + newInput + ']+');
-    return wordsInAnagram.test(wordsForTheAnagram2)
+  if(formattedInput) {
+    let wordsInAnagram = new RegExp('[' + formattedInput + ']+');
+    return wordsInAnagram.test(filteredArray)
   }
 }
 
-let input2 = 'vermelho'
+let input = 'vermelho'
 let input4 = 'oi gente'
 
 // readFile no node

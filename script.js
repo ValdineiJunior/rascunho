@@ -1,9 +1,9 @@
-let array = []
+let wordArray = []
 
 fetch('./words.txt')
   .then(response => response.text())
   .then(text => {
-    array = text.split("\n");
+    wordArray = text.split("\n");
     anagrams(input2)
     anagrams(input4)
   })
@@ -12,7 +12,7 @@ function anagrams(input) {
     let inputWithValidCharacters = (/\w|\s/g.test(input))
     let inputContainsAtLeastOnePhraseOrWord = input.length != 0
     if (inputWithValidCharacters && inputContainsAtLeastOnePhraseOrWord) {
-      let wordsForTheAnagram = array.filter(element => {
+      let wordsForTheAnagram = wordArray.filter(element => {
         let wordsFitInAnagram = new RegExp('[^' + input + ']');
         return !wordsFitInAnagram.test(element)
       });
@@ -62,5 +62,3 @@ function anagrams(input) {
 
 let input2 = 'volvo'
 let input4 = 'oi gente'
-
-// readFile no node
