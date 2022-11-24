@@ -41,6 +41,7 @@ function checksIfTheInputIsValid(formattedInput) {
   }
 }
 
+function checkIfYouCanRemoveCharactersFromInput(wordToCut,wordToCompare)
 
 function cutWords(entrada, retirada) {
   if (entrada && retirada) {
