@@ -11,13 +11,10 @@ fetch('./words.txt')
       console.log(`(${formattedInput}) - Expressão invalida, deve conter uma frase ou uma palavra, não permitido caracteres especiais.`)
       return
     }
-    console.log(formattedInput)
-    console.log(filteredArray)
-    console.log(checkingIfTheWordFitsTheInput(formattedInput, "EHLE"))
-    // for (let index = 0; index < filteredArray.length; index++) {
-    //   verifyWord(filteredArray, formattedInput)
-    //   filteredArray = filteredArray.slice(index)
-    // }  
+    for (let index = 0; index < filteredArray.length; index++) {
+      verifyWord(filteredArray, formattedInput)
+      filteredArray = filteredArray.slice(index)
+    }  
   })
 
 function changingInputToCorrectFormat(input) {
@@ -49,53 +46,34 @@ function checkingIfTheWordFitsTheInput(input, word) {
   return regex.test(inputRearrangedWithLettersInAlphabeticalOrder)
 }
 
-function checkingIfTheWordFitsTheInput(inputToBeCut, lettersToBeRemoved) {
- // if (arrayToBeCut.every)
-  // for (let index = 0; index < arrayToBeRemoved.length; index++) {
-  //   const element = arrayToBeRemoved[index];
-  //   let indexChar = arrayToBeCut.findIndex(e => {
-  //     return e === element
-  //   })
-  //   if (indexChar !== -1) {
-  //      arrayToBeCut.splice(indexChar,1)
-  //   } else {
-  //      return
-  //   }
-  // }
-  // return arrayToBeCut
+function cutTheInput(input, word) {
+  let arrayInput = [...input]
+  let ArrayWord = [...word]
+  for (let index = 0; index < ArrayWord.length; index++) {
+    const element = ArrayWord[index];
+    let indexChar = arrayInput.findIndex(e => {
+      return e === element
+    })
+    arrayInput.splice(indexChar,1)
+  }
+  return arrayInput
 }
 
 
-// function verifyWord(filteredArray, formattedInput) {
-//   let arrayResposta = []
-//   let words = filteredArray
-//   let inputToIterable = formattedInput
-
-//   if (inputToIterable.length == 0) {
-//     console.log(arrayResposta)
-//   } else {
-//     let nextword = words.find(element => findAnagrams(element,inputToIterable))
-//     if (inputToIterable.length == nextword.length) {
-//       arrayResposta.push(words.find(element => findAnagrams(element,inputToIterable)))
-//     } else {
-//       arrayResposta.push(words.find(element => findAnagrams(element,inputToIterable)))
-//       let verificando = cutWords(inputToIterable,arrayResposta[arrayResposta.length-1])
-      
-//       if (verificando == undefined) {
-//         arrayResposta.pop()
-//         let arrayIndex = (words.findIndex(element => findAnagrams(element,inputToIterable)))
-//         words = words.slice(arrayIndex+1)
-//         verifyWord(words,inputToIterable) 
-//       } else {
-//           inputToIterable = cutWords(inputToIterable,arrayResposta[arrayResposta.length-1])
-//           verifyWord(words,inputToIterable)
-//         }  
-       
-//     }
-//   }
-//   // console.log(words)
-//   // console.log(arrayResposta)
-// }
+function verifyWord(filteredArray, formattedInput) {
+  let arrayResposta = []
+  let nextword = filteredArray.find(element => findAnagrams(element,formattedInput))
+  if (checkingIfTheWordFitsTheInput(formattedInput,nextword)) {
+    formattedInput = function cutTheInput(formattedInput, nextword)
+    arrayResposta.push(nextword)
+    let arrayIndex = (filteredArray.findIndex(element => findAnagrams(element,formattedInput)))
+    filteredArray = filteredArray.slice(arrayIndex+1) 
+  } else {
+    filteredArray = filteredArray.slice(arrayIndex+1) 
+  }
+  console.log(filteredArray)
+  console.log(arrayResposta)
+}
 
 function findAnagrams(formattedInput,filteredArray) {
 
