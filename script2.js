@@ -11,9 +11,11 @@ fetch('./words.txt')
       console.log(`(${formattedInput}) - Expressão invalida, deve conter uma frase ou uma palavra, não permitido caracteres especiais.`)
       return
     }
-    for (let index = 0; index < filteredArray.length; index++) {
-      verifyWord(filteredArray, formattedInput)
-      filteredArray = filteredArray.slice(index)
+    let counter = filteredArray.length
+    for (let index = 0; index < counter; index++) {
+      let arrayResposta = []
+      verifyWord(filteredArray, formattedInput,arrayResposta)
+      filteredArray = filteredArray.slice(1)
     }  
   })
 
@@ -40,11 +42,23 @@ function checksIfTheInputIsValid(formattedInput) {
 }
 
 function checkingIfTheWordFitsTheInput(input, word) {
-  let wordRearrangedWithLettersInAlphabeticalOrder = [...word].sort().join("")
-  let inputRearrangedWithLettersInAlphabeticalOrder = [...input].sort().join("")
-  let regex = new RegExp('(' + wordRearrangedWithLettersInAlphabeticalOrder + ')');
-  return regex.test(inputRearrangedWithLettersInAlphabeticalOrder)
+  let result = true
+  let arrayInput = [...input]
+  let ArrayWord = [...word]
+  for (let index = 0; index < ArrayWord.length; index++) {
+    const element = ArrayWord[index];
+    let indexChar = arrayInput.findIndex(e => {
+      return e === element
+    })
+    if(indexChar === -1) {
+      result = false
+      return result
+    }
+    arrayInput.splice(indexChar,1)
+  }
+  return result
 }
+
 
 function cutTheInput(input, word) {
   let arrayInput = [...input]
@@ -58,29 +72,36 @@ function cutTheInput(input, word) {
   }
   return arrayInput
 }
+let arrayTeste = ['ELM','OH','HO','REV']
+let arrayRespostaTeste = []
+console.log(verifyWord(arrayTeste, "VERMELHO",arrayRespostaTeste))
 
-
-function verifyWord(filteredArray, formattedInput) {
-  let arrayResposta = []
+function verifyWord(filteredArray, formattedInput,arrayResposta) {
+  let formattedInputIsEmpty
   let nextword = filteredArray.find(element => findAnagrams(element,formattedInput))
+  if (nextword == undefined) {
+    return
+  }
+  let arrayIndex = (filteredArray.findIndex(element => findAnagrams(element,formattedInput)))
   if (checkingIfTheWordFitsTheInput(formattedInput,nextword)) {
-    formattedInput = function cutTheInput(formattedInput, nextword)
+    formattedInput = cutTheInput(formattedInput, nextword)
     arrayResposta.push(nextword)
-    let arrayIndex = (filteredArray.findIndex(element => findAnagrams(element,formattedInput)))
-    filteredArray = filteredArray.slice(arrayIndex+1) 
+    filteredArray = filteredArray.slice(arrayIndex+1)
+    formattedInputIsEmpty = formattedInput.length === 0
+    if (formattedInputIsEmpty) {
+      console.log(arrayResposta)
+    } else {
+      verifyWord(filteredArray,formattedInput,arrayResposta)
+    }
   } else {
     filteredArray = filteredArray.slice(arrayIndex+1) 
   }
-  console.log(filteredArray)
-  console.log(arrayResposta)
+  // console.log(arrayResposta)
 }
 
 function findAnagrams(formattedInput,filteredArray) {
-
-  if(formattedInput) {
-    let wordsInAnagram = new RegExp('[' + formattedInput + ']+');
-    return wordsInAnagram.test(filteredArray)
-  }
+  let wordsInAnagram = new RegExp('[' + formattedInput + ']+');
+  return wordsInAnagram.test(filteredArray)
 }
 
 let input = 'vermelho'
