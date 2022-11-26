@@ -12,11 +12,11 @@ fetch('./words.txt')
       return
     }
     let counter = filteredArray.length
-    for (let index = 0; index < counter; index++) {
-      let arrayResposta = []
-      verifyWord(filteredArray, formattedInput,arrayResposta)
-      filteredArray = filteredArray.slice(1)
-    }  
+    // for (let index = 0; index < counter; index++) {
+    //   let arrayResposta = []
+    //   verifyWord(filteredArray, formattedInput,arrayResposta)
+    //   filteredArray = filteredArray.slice(1)
+    // }  
   })
 
 function changingInputToCorrectFormat(input) {
@@ -70,33 +70,60 @@ function cutTheInput(input, word) {
     })
     arrayInput.splice(indexChar,1)
   }
-  return arrayInput
+  return arrayInput.join('')
 }
-let arrayTeste = ['ELM','OH','HO','REV']
+let arrayTeste = ['ELM','OH','HO','REV','REV','LEVER','OHM','REVEL','HOVER','HOLM','VEER','HELM','OVER','ROVE']
 let arrayRespostaTeste = []
 console.log(verifyWord(arrayTeste, "VERMELHO",arrayRespostaTeste))
 
 function verifyWord(filteredArray, formattedInput,arrayResposta) {
+  let AAfilteredArray = filteredArray
+  let AAformattedInput = formattedInput
+  let AAarrayResposta = arrayResposta
+  // console.log(AAfilteredArray)
+  // console.log(AAformattedInput)
+  // console.log(AAarrayResposta)
+  // console.log("---------------------------")
+  // console.log(AAfilteredArray)
+  // console.log(AAformattedInput)
+  // console.log(arrayResposta)
   let formattedInputIsEmpty
-  let nextword = filteredArray.find(element => findAnagrams(element,formattedInput))
+  let nextword = AAfilteredArray.find(element => findAnagrams(element,AAformattedInput))
   if (nextword == undefined) {
     return
   }
-  let arrayIndex = (filteredArray.findIndex(element => findAnagrams(element,formattedInput)))
-  if (checkingIfTheWordFitsTheInput(formattedInput,nextword)) {
-    formattedInput = cutTheInput(formattedInput, nextword)
-    arrayResposta.push(nextword)
-    filteredArray = filteredArray.slice(arrayIndex+1)
-    formattedInputIsEmpty = formattedInput.length === 0
+  let arrayIndex = (AAfilteredArray.findIndex(element => findAnagrams(element,AAformattedInput)))
+  if (checkingIfTheWordFitsTheInput(AAformattedInput,nextword)) {
+    
+    let backupFormattedInput = AAformattedInput
+    let backuparrayResposta = AAarrayResposta
+    AAfilteredArray = AAfilteredArray.slice(arrayIndex+1)
+    AAformattedInput = cutTheInput(AAformattedInput, nextword)
+    AAarrayResposta.push(nextword)
+    formattedInputIsEmpty = AAformattedInput.length === 0
     if (formattedInputIsEmpty) {
-      console.log(arrayResposta)
+      console.log(AAarrayResposta)
+      AAarrayResposta.pop()
+      verifyWord(AAfilteredArray,backupFormattedInput,AAarrayResposta)
     } else {
-      verifyWord(filteredArray,formattedInput,arrayResposta)
+      // AAfilteredArray = AAfilteredArray.slice(1)
+      verifyWord(AAfilteredArray,AAformattedInput,backuparrayResposta)
     }
-  } else {
-    filteredArray = filteredArray.slice(arrayIndex+1) 
+    //  else {
+    //   // console.log('aqui')
+    //   // console.log(arrayResposta)
+      
+    //   // console.log(backuparrayResposta)
+    //   // console.log('aqui')
+    //   // console.log(backuparrayResposta)
+    //   arrayResposta.pop()
+    //   arrayResposta.pop()
+    //   verifyWord(filteredArray,backupFormattedInput,backuparrayResposta)
+    //   // console.log(arrayResposta)
+    // }
+    
   }
-  // console.log(arrayResposta)
+  // console.log(AAarrayResposta)
 }
 
 function findAnagrams(formattedInput,filteredArray) {
