@@ -11,6 +11,10 @@ fetch('./words.txt')
       console.log(`(${formattedInput}) - Expressão invalida, deve conter uma frase ou uma palavra, não permitido caracteres especiais.`)
       return
     }
+    // 'LEVER','OHM','REVEL','HOVER','HOLM','VEER','HELM','OVER','ROVE'
+    let arrayTeste = ['ELM','OH','HO','REV',]
+    let result = []
+    console.log(verifyWord(arrayTeste, 'VERMELHO',result))
     let counter = filteredArray.length
     // for (let index = 0; index < counter; index++) {
     //   let arrayResposta = []
@@ -72,35 +76,34 @@ function cutTheInput(input, word) {
   }
   return arrayInput.join('')
 }
-let arrayTeste = ['ELM','OH','HO','REV','REV','LEVER','OHM','REVEL','HOVER','HOLM','VEER','HELM','OVER','ROVE']
-let result = []
-console.log(verifyWord(arrayTeste, "VERMELHO"))
 
-function verifyWord(filteredArray, formattedInput) {
+
+function verifyWord(filteredArray, formattedInput,result) {
+  let nextword = filteredArray.shift()
+  result = [...result, nextword]
+  let newListWords = [...filteredArray];
+  let newUserWord = [...formattedInput];
   let formattedInputIsEmpty
-  let nextword = filteredArray.find(element => checkingIfTheWordFitsTheInput(formattedInput,element))
-  let arrayIndex = (filteredArray.findIndex(element => checkingIfTheWordFitsTheInput(formattedInput,element)))
-  if (nextword == undefined) {
-    return false
+  let arrayIndex = (newListWords.findIndex(element => checkingIfTheWordFitsTheInput(newUserWord,element)))
+  if (arrayIndex == -1) {
+    return result
   }
-  
-  result.push(nextword)
-  filteredArray = filteredArray.slice(arrayIndex+1)
-  formattedInput = cutTheInput(formattedInput, nextword)
-  formattedInputIsEmpty = formattedInput.length === 0
-  console.log(formattedInput)
+  newListWords = newListWords.slice(arrayIndex)
+  newUserWord = cutTheInput(newUserWord, nextword)
+  formattedInputIsEmpty = newUserWord.length === 0
   if (formattedInputIsEmpty) {
+    return result
+  } else {
     console.log(result)
-    formattedInput = nextword
-    result.pop()
-    verifyWord(filteredArray,formattedInput)
+    let sizeListWords = newListWords.length
+    for (let i = 0; i < sizeListWords; i++) {
+      let isAnagram = verifyWord(newListWords, newUserWord, result)
+      if (isAnagram) {
+        isAnagram = isAnagram.join(' ')
+        console.log(isAnagram)
+      }
+    }
   }
-  // if (result.length > 1 && filteredArray.length > 1) {
-  //   let newFilteredArray = filteredArray.slice(arrayIndex+1)
-  //   console.log(result)
-  //   verifyWord(newFilteredArray,formattedInput)
-  // }
-  verifyWord(filteredArray,formattedInput)
 }
 
 let input = 'vermelho'
