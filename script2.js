@@ -73,62 +73,34 @@ function cutTheInput(input, word) {
   return arrayInput.join('')
 }
 let arrayTeste = ['ELM','OH','HO','REV','REV','LEVER','OHM','REVEL','HOVER','HOLM','VEER','HELM','OVER','ROVE']
-let arrayRespostaTeste = []
-console.log(verifyWord(arrayTeste, "VERMELHO",arrayRespostaTeste))
+let result = []
+console.log(verifyWord(arrayTeste, "VERMELHO"))
 
-function verifyWord(filteredArray, formattedInput,arrayResposta) {
-  let AAfilteredArray = filteredArray
-  let AAformattedInput = formattedInput
-  let AAarrayResposta = arrayResposta
-  // console.log(AAfilteredArray)
-  // console.log(AAformattedInput)
-  // console.log(AAarrayResposta)
-  // console.log("---------------------------")
-  // console.log(AAfilteredArray)
-  // console.log(AAformattedInput)
-  // console.log(arrayResposta)
+function verifyWord(filteredArray, formattedInput) {
   let formattedInputIsEmpty
-  let nextword = AAfilteredArray.find(element => findAnagrams(element,AAformattedInput))
+  let nextword = filteredArray.find(element => checkingIfTheWordFitsTheInput(formattedInput,element))
+  let arrayIndex = (filteredArray.findIndex(element => checkingIfTheWordFitsTheInput(formattedInput,element)))
   if (nextword == undefined) {
-    return
+    return false
   }
-  let arrayIndex = (AAfilteredArray.findIndex(element => findAnagrams(element,AAformattedInput)))
-  if (checkingIfTheWordFitsTheInput(AAformattedInput,nextword)) {
-    
-    let backupFormattedInput = AAformattedInput
-    let backuparrayResposta = AAarrayResposta
-    AAfilteredArray = AAfilteredArray.slice(arrayIndex+1)
-    AAformattedInput = cutTheInput(AAformattedInput, nextword)
-    AAarrayResposta.push(nextword)
-    formattedInputIsEmpty = AAformattedInput.length === 0
-    if (formattedInputIsEmpty) {
-      console.log(AAarrayResposta)
-      AAarrayResposta.pop()
-      verifyWord(AAfilteredArray,backupFormattedInput,AAarrayResposta)
-    } else {
-      // AAfilteredArray = AAfilteredArray.slice(1)
-      verifyWord(AAfilteredArray,AAformattedInput,backuparrayResposta)
-    }
-    //  else {
-    //   // console.log('aqui')
-    //   // console.log(arrayResposta)
-      
-    //   // console.log(backuparrayResposta)
-    //   // console.log('aqui')
-    //   // console.log(backuparrayResposta)
-    //   arrayResposta.pop()
-    //   arrayResposta.pop()
-    //   verifyWord(filteredArray,backupFormattedInput,backuparrayResposta)
-    //   // console.log(arrayResposta)
-    // }
-    
+  
+  result.push(nextword)
+  filteredArray = filteredArray.slice(arrayIndex+1)
+  formattedInput = cutTheInput(formattedInput, nextword)
+  formattedInputIsEmpty = formattedInput.length === 0
+  console.log(formattedInput)
+  if (formattedInputIsEmpty) {
+    console.log(result)
+    formattedInput = nextword
+    result.pop()
+    verifyWord(filteredArray,formattedInput)
   }
-  // console.log(AAarrayResposta)
-}
-
-function findAnagrams(formattedInput,filteredArray) {
-  let wordsInAnagram = new RegExp('[' + formattedInput + ']+');
-  return wordsInAnagram.test(filteredArray)
+  // if (result.length > 1 && filteredArray.length > 1) {
+  //   let newFilteredArray = filteredArray.slice(arrayIndex+1)
+  //   console.log(result)
+  //   verifyWord(newFilteredArray,formattedInput)
+  // }
+  verifyWord(filteredArray,formattedInput)
 }
 
 let input = 'vermelho'
