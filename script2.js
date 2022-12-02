@@ -11,11 +11,19 @@ fetch('./words.txt')
       console.log(`(${formattedInput}) - Expressão invalida, deve conter uma frase ou uma palavra, não permitido caracteres especiais.`)
       return
     }
-    // 'LEVER','OHM','REVEL','HOVER','HOLM','VEER','HELM','OVER','ROVE'
-    let arrayTeste = ['ELM','OH','HO','REV',]
-    let result = []
-    console.log(verifyWord(arrayTeste, 'VERMELHO',result))
+    let arrayTeste = ['ELM','OH','HO','REV','LEVER','OHM','REVEL','HOVER','HOLM','VEER','HELM','OVER','ROVE']
+    let outroFormattedinput = [...filteredArray]
     let counter = filteredArray.length
+    console.log(counter)
+    for (let index = 0; index < counter; index++) {
+      let result = []
+      verifyWord(outroFormattedinput,formattedInput,result)
+      outroFormattedinput = filteredArray.slice(index)
+      // console.log(outroFormattedinput)
+    }
+    // console.log(outroFormattedinput)
+    // console.log(verifyWord(arrayTeste, 'VERMELHO',result))
+    // let counter = filteredArray.length
     // for (let index = 0; index < counter; index++) {
     //   let arrayResposta = []
     //   verifyWord(filteredArray, formattedInput,arrayResposta)
@@ -84,17 +92,23 @@ function verifyWord(filteredArray, formattedInput,result) {
   let newListWords = [...filteredArray];
   let newUserWord = [...formattedInput];
   let formattedInputIsEmpty
-  let arrayIndex = (newListWords.findIndex(element => checkingIfTheWordFitsTheInput(newUserWord,element)))
-  if (arrayIndex == -1) {
-    return result
+  formattedInputIsEmpty = newUserWord.length === nextword.length
+  newUserWord = cutTheInput(newUserWord, nextword)
+  let arrayIndex = (filteredArray.findIndex(element => checkingIfTheWordFitsTheInput(newUserWord,element)))
+  if (arrayIndex === -1) {
+    if (!(checkingIfTheWordFitsTheInput(formattedInput,nextword))) {
+      return
+    }
+    newListWords = []
+    // console.log(nextword)
+    // console.log(formattedInput)
+  } else {
+
   }
   newListWords = newListWords.slice(arrayIndex)
-  newUserWord = cutTheInput(newUserWord, nextword)
-  formattedInputIsEmpty = newUserWord.length === 0
   if (formattedInputIsEmpty) {
     return result
   } else {
-    console.log(result)
     let sizeListWords = newListWords.length
     for (let i = 0; i < sizeListWords; i++) {
       let isAnagram = verifyWord(newListWords, newUserWord, result)
