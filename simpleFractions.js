@@ -2,7 +2,7 @@ let fractions = []
 fetch('./frac.txt')
   .then(response => response.text())
   .then(text => {
-    fractions = text.split('\n')
+    fractions = text.split('\r\n')
     fractions.pop()
     console.log(fractions)
     for (let index = 0; index < fractions.length; index++) {
@@ -32,7 +32,20 @@ fetch('./frac.txt')
                   console.log(`${numerador}/${denominador}`)
                 }
               } else {
-                console.log(`${numerador}/${denominador}`)
+                // console.log(`${numerador}/${denominador}`)
+                for (let index = numerador; index > 0; index--) {
+                  let checkNumerador = Number.isInteger(numerador/index)
+                  let checkDenominador = Number.isInteger(denominador/index)
+                  if (checkNumerador && checkDenominador) {
+                    numerador = numerador/index
+                    denominador = denominador/index
+                    console.log(`${numerador}/${denominador}`)
+                    break
+                  } else {
+                    
+                  }
+
+                }
               }
             } else {
               let resto = numerador%denominador
