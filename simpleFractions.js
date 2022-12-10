@@ -4,60 +4,58 @@ fetch('./frac.txt')
   .then(text => {
     fractions = text.split('\r\n')
     fractions.pop()
-    console.log(fractions)
     for (let index = 0; index < fractions.length; index++) {
-      const element = fractions[index];
-      let hasDivisor = new RegExp(/(\/)\w/)
-      if(!hasDivisor.test(element)) {
+      const element = fractions[index]
+      const fintDivisor = (/(\/)\w/)
+      const ElementIsAlreadyAninteger = !fintDivisor.test(element)
+      if (ElementIsAlreadyAninteger) {
         console.log(element)
       } else {
-        let numeradorAndDenominador = element.split('/')
-        let numerador = parseInt(numeradorAndDenominador[0])
-        let denominador = parseInt(numeradorAndDenominador[1])
-        if(!denominador) {
-          console.log("ERR")
+        const ArrayWithNumeratorAndDenominator = element.split('/')
+        const numerator = parseInt(ArrayWithNumeratorAndDenominator[0])
+        const denominator = parseInt(ArrayWithNumeratorAndDenominator[1])
+        const denominatorIsZero = denominator === 0
+        if (denominatorIsZero) {
+          console.log('ERR')
         } else {
-          const resultado = numerador/denominador
-          if (Number.isInteger(resultado)) {
-            console.log(resultado.toString())
+          const quotient = numerator / denominator
+          const resresultOfDivisionIsAninteger = Number.isInteger(quotient)
+          if (resresultOfDivisionIsAninteger) {
+            console.log(quotient.toString())
           } else {
-            if (denominador>numerador) {
-              let resultado = denominador/numerador
-              if (Number.isInteger(resultado)) {
-                if (numerador > 1) {
-                  numerador = numerador / resultado
-                  denominador = denominador / resultado
-                  console.log(`${numerador}/${denominador}`)
+            if (numerator > denominator) {
+              const remainder = numerator % denominator
+              const simplifiedNumerator = numerator - remainder
+              const integer = simplifiedNumerator / denominator
+              console.log(`${integer} ${remainder}/${denominator}`)
+            } else {
+              const proportion = denominator / numerator
+              const theTwoNumbersaremultiples = Number.isInteger(proportion)
+              if (theTwoNumbersaremultiples) {
+                const canBeSimplified = numerator > 1
+                if (canBeSimplified) {
+                  const simplifiedNumerator = numerator / proportion
+                  const simplifiedDenominator = denominator / proportion
+                  console.log(`${simplifiedNumerator}/${simplifiedDenominator}`)
                 } else {
-                  console.log(`${numerador}/${denominador}`)
+                  console.log(`${numerator}/${denominator}`)
                 }
               } else {
-                // console.log(`${numerador}/${denominador}`)
-                for (let index = numerador; index > 0; index--) {
-                  let checkNumerador = Number.isInteger(numerador/index)
-                  let checkDenominador = Number.isInteger(denominador/index)
+                for (let index = numerator; index > 0; index--) {
+                  const checkNumerador = Number.isInteger(numerator / index)
+                  const checkDenominador = Number.isInteger(denominator / index)
                   if (checkNumerador && checkDenominador) {
-                    numerador = numerador/index
-                    denominador = denominador/index
-                    console.log(`${numerador}/${denominador}`)
+                    const simplifiedNumerator = numerator / index
+                    const simplifiedDenominator = denominator / index
+                    console.log(`${simplifiedNumerator}/${simplifiedDenominator}`)
                     break
-                  } else {
-                    
                   }
-
                 }
               }
-            } else {
-              let resto = numerador%denominador
-              let semDivisor = numerador - resto
-              let firstNumber = semDivisor/denominador
-              console.log(`${firstNumber} ${resto}/${denominador}`)
-               
-
             }
-            
           }
         }
       }
     }
-  })
+  }
+  )
