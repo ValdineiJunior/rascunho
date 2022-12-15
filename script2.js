@@ -15,7 +15,7 @@ fetch('./words.txt')
     let outroFormattedinput = [...filteredArray]
     let counter = filteredArray.length
     console.log(counter)
-    for (let index = 0; index < counter; index++) {
+    for (let index = 0; index < 10; index++) {
       let result = []
       verifyWord(outroFormattedinput,formattedInput,result)
       outroFormattedinput = filteredArray.slice(index)
@@ -54,6 +54,7 @@ function checksIfTheInputIsValid(formattedInput) {
 }
 
 function checkingIfTheWordFitsTheInput(input, word) {
+  console.log(input, word)
   let result = true
   let arrayInput = [...input]
   let ArrayWord = [...word]
