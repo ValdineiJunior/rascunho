@@ -11,13 +11,13 @@ fetch('./words.txt')
       console.log(`(${formattedInput}) - Expressão invalida, deve conter uma frase ou uma palavra, não permitido caracteres especiais.`)
       return
     }
-    let arrayTeste = ['ELM','OH','HO','REV','LEVER','OHM','REVEL','HOVER','HOLM','VEER','HELM','OVER','ROVE']
+    let arrayTeste = ['ELM', 'OH', 'HO', 'REV', 'LEVER', 'OHM', 'REVEL', 'HOVER', 'HOLM', 'VEER', 'HELM', 'OVER', 'ROVE']
     let outroFormattedinput = [...filteredArray]
     let counter = filteredArray.length
     console.log(counter)
     for (let index = 0; index < 10; index++) {
       let result = []
-      verifyWord(outroFormattedinput,formattedInput,result)
+      verifyWord(outroFormattedinput, formattedInput, result)
       outroFormattedinput = filteredArray.slice(index)
       // console.log(outroFormattedinput)
     }
@@ -32,7 +32,7 @@ fetch('./words.txt')
   })
 
 function changingInputToCorrectFormat(input) {
-  return input = input.replace(' ','').toUpperCase()
+  return input = input.replace(' ', '').toUpperCase()
 }
 
 function filteringArrayForWordsThatFitTheAnagram(formattedInput) {
@@ -49,12 +49,12 @@ function checksIfTheInputIsValid(formattedInput) {
   if (inputWithValidCharacters && inputContainsAtLeastOnePhraseOrWord) {
     return true
   } else {
-    return false 
+    return false
   }
 }
 
 function checkingIfTheWordFitsTheInput(input, word) {
-  console.log(input, word)
+  // console.log(input, word)
   let result = true
   let arrayInput = [...input]
   let ArrayWord = [...word]
@@ -63,11 +63,11 @@ function checkingIfTheWordFitsTheInput(input, word) {
     let indexChar = arrayInput.findIndex(e => {
       return e === element
     })
-    if(indexChar === -1) {
+    if (indexChar === -1) {
       result = false
       return result
     }
-    arrayInput.splice(indexChar,1)
+    arrayInput.splice(indexChar, 1)
   }
   return result
 }
@@ -81,13 +81,16 @@ function cutTheInput(input, word) {
     let indexChar = arrayInput.findIndex(e => {
       return e === element
     })
-    arrayInput.splice(indexChar,1)
+    if (indexChar == -1) {
+      return input
+    }
+    arrayInput.splice(indexChar, 1)
   }
   return arrayInput.join('')
 }
 
 
-function verifyWord(filteredArray, formattedInput,result) {
+function verifyWord(filteredArray, formattedInput, result) {
   let nextword = filteredArray.shift()
   result = [...result, nextword]
   let newListWords = [...filteredArray];
@@ -95,9 +98,9 @@ function verifyWord(filteredArray, formattedInput,result) {
   let formattedInputIsEmpty
   formattedInputIsEmpty = newUserWord.length === nextword.length
   newUserWord = cutTheInput(newUserWord, nextword)
-  let arrayIndex = (filteredArray.findIndex(element => checkingIfTheWordFitsTheInput(newUserWord,element)))
+  let arrayIndex = (filteredArray.findIndex(element => checkingIfTheWordFitsTheInput(newUserWord, element)))
   if (arrayIndex === -1) {
-    if (!(checkingIfTheWordFitsTheInput(formattedInput,nextword))) {
+    if (!(checkingIfTheWordFitsTheInput(formattedInput, nextword))) {
       return
     }
     newListWords = []

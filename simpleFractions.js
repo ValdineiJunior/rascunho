@@ -5,7 +5,11 @@ function readFractions(path) {
         if (error) {
             console.log("erro de leitura: " + error.message);
         } else {
-            const fractions = data.split("\n");
+            if ((/(\r)/.test(data))) {
+                numbersArray = data.split("\r\n");
+            } else {
+                numbersArray = data.split("\n");
+            }
             fractions.pop();
             for (let index = 0; index < fractions.length; index++) {
                 const element = fractions[index];
