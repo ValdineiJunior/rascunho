@@ -8,7 +8,7 @@ fetch('./words.txt')
     } else {
       wordArray = text.split("\n");
     }
-    let input = changingInputToCorrectFormat(input5)
+    let input = changingInputToCorrectFormat(input4)
     let array = filteringArrayForWordsThatFitTheAnagram(input)
     let inputIsValid = checksIfTheInputIsValid(input)
     if (inputIsValid == false) {
@@ -69,9 +69,6 @@ function verifyWord(array, input, result) {
   let newResult = [...result];
   for (let index = 0; index < newArray.length; index++) {
     const element = newArray[index];
-    // console.log(newArray)
-    // console.log(newInput)
-    // console.log((cutTheInput(newInput, element)) != newInput)
     if ((cutTheInput(newInput, element)) !== newInput) {
       if (newArray.length > 2) {
         verifyWord(newArray.slice(index + 1), newInput, newResult)
@@ -82,15 +79,9 @@ function verifyWord(array, input, result) {
         console.log(newResult)
       } else {
         newArray = newArray.slice(index + 1)
-        // console.log(newArray)
         verifyWord(newArray, newInput, newResult)
-
       }
-
       break
-      console.log(newInput)
-      console.log(newArray)
-      console.log(result)
     }
   }
 }
