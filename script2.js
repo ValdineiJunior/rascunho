@@ -6,37 +6,35 @@ fetch('./d14.txt')
     expressoesNumericas = text.split("\n");
     expressoesNumericas = expressoesNumericas.slice(0,-1)
     console.log(expressoesNumericas)
-    console.log(RegExp("/0|/ 0").test(expressoesNumericas))
-    let expressao = expressoesNumericas[4].split(' ').join('').split(/(\d|\(|\))/)
-    expressao.shift()
-    expressao.pop()
-    expressao.forEach(function(item, i) { if (item == '') expressao[i] = 'c'; });
-    console.log(expressao)
-    verificaSeTemParentes(expressao)
+    for (let index = 0; index < expressoesNumericas.length; index++) {
+      const element = expressoesNumericas[index];
+      let expressao = element.split(' ').join('').split(/(\d|\(|\))/)
+      expressao.shift()
+      expressao.pop()
+      expressao.forEach(function(item, i) { if (item == '') expressao[i] = 'c'; });
+      verificaSeTemParentes(expressao)
+
+      
+    }
   })
 
 function verificaSeTemParentes(expressao) {
-  let firstIndexOpenParentheses = expressao.findIndex((elemenet)=> elemenet == '(')
-  let lastIndexCloseParentheses = expressao.findLastIndex((elemenet)=> elemenet == ')')
-  console.log(firstIndexOpenParentheses)
-  console.log(lastIndexCloseParentheses)
-  console.log(expressao)
-  if (expressao[expressao.length-1] == 0) {
+  let eDivididoPorZero = RegExp("/0").test(expressao.join(''))
+  if (eDivididoPorZero) {
     return console.log('ERR DIVBYZERO')
   }
+  let lastIndexCloseParentheses = expressao.findIndex((elemenet)=> elemenet == ')')
+  let firstIndexOpenParentheses = expressao.slice(0, lastIndexCloseParentheses).findLastIndex((elemenet)=> elemenet == '(')
   if (firstIndexOpenParentheses != -1 && lastIndexCloseParentheses != -1) {
     let expressaoInterna = expressao.slice(firstIndexOpenParentheses+2, lastIndexCloseParentheses-1)
-    console.log(expressaoInterna)
     result = verificaSeTemParentes(expressaoInterna)
-    console.log(expressao)
     expressao.splice(firstIndexOpenParentheses,lastIndexCloseParentheses-firstIndexOpenParentheses+1,result.toString())
   }
   resolverExpressao(expressao)
-  console.log(expressao)
   if (expressao.length > 1) {
     return console.log('ERR SYNTAX')
   }
-
+  console.log(expressao)
   return expressao
 }
 
@@ -74,9 +72,6 @@ function calculo(expressao, operador) {
          expressao.splice(indexSum-1,3,multiplica.toString()) 
         break;
       case '/':
-        if (expressao[indexSum+1] == '0') {
-          return expressao
-        }
         let divide = parseInt(expressao[indexSum-1]) / parseInt(expressao[indexSum+1])
          expressao.splice(indexSum-1,3,divide.toString()) 
         break;
