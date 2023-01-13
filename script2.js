@@ -6,36 +6,45 @@ fetch('./d14.txt')
     expressoesNumericas = text.split("\n");
     expressoesNumericas = expressoesNumericas.slice(0,-1)
     console.log(expressoesNumericas)
-    let expressao = expressoesNumericas[6].split(' ').join('').split(/(\d|\(|\))/)
+    console.log(RegExp("/0|/ 0").test(expressoesNumericas))
+    let expressao = expressoesNumericas[4].split(' ').join('').split(/(\d|\(|\))/)
     expressao.shift()
     expressao.pop()
     expressao.forEach(function(item, i) { if (item == '') expressao[i] = 'c'; });
     console.log(expressao)
-    let firstIndexOpenParentheses = expressao.findIndex((elemenet)=> elemenet == '(')
-    let lastIndexCloseParentheses = expressao.findLastIndex((elemenet)=> elemenet == ')')
-    console.log(firstIndexOpenParentheses)
-    console.log(lastIndexCloseParentheses)
-    console.log(expressao)
-    if (firstIndexOpenParentheses == -1 && lastIndexCloseParentheses == -1) {
-      resolverExpressao(expressao)
-    } else {
-      let expressaoInterna = expressao.slice(firstIndexOpenParentheses+2, lastIndexCloseParentheses-1)
-      let resultadoInterno = resolverExpressao(expressaoInterna)[0]
-      expressao.splice(firstIndexOpenParentheses,(lastIndexCloseParentheses-firstIndexOpenParentheses+1),resultadoInterno)
-      console.log(expressao)
-      resolverExpressao(expressao)
-    }
-    console.log(expressao)
+    verificaSeTemParentes(expressao)
   })
+
+function verificaSeTemParentes(expressao) {
+  let firstIndexOpenParentheses = expressao.findIndex((elemenet)=> elemenet == '(')
+  let lastIndexCloseParentheses = expressao.findLastIndex((elemenet)=> elemenet == ')')
+  console.log(firstIndexOpenParentheses)
+  console.log(lastIndexCloseParentheses)
+  console.log(expressao)
+  if (expressao[expressao.length-1] == 0) {
+    return console.log('ERR DIVBYZERO')
+  }
+  if (firstIndexOpenParentheses != -1 && lastIndexCloseParentheses != -1) {
+    let expressaoInterna = expressao.slice(firstIndexOpenParentheses+2, lastIndexCloseParentheses-1)
+    console.log(expressaoInterna)
+    result = verificaSeTemParentes(expressaoInterna)
+    console.log(expressao)
+    expressao.splice(firstIndexOpenParentheses,lastIndexCloseParentheses-firstIndexOpenParentheses+1,result.toString())
+  }
+  resolverExpressao(expressao)
+  console.log(expressao)
+  if (expressao.length > 1) {
+    return console.log('ERR SYNTAX')
+  }
+
+  return expressao
+}
 
 function resolverExpressao(expressao) {
   expressao = existeOOperadorNaExpressão(expressao,'c')
   expressao = existeOOperadorNaExpressão(expressao,'^')
   expressao = existeOOperadorNaExpressão(expressao,'*')
   expressao = existeOOperadorNaExpressão(expressao,'/')
-  if (expressao[0] == 0) {
-    return console.log('ERR DIVBYZERO')
-  }
   expressao = existeOOperadorNaExpressão(expressao,'+')
   expressao = existeOOperadorNaExpressão(expressao,'-')
   return expressao
@@ -66,8 +75,6 @@ function calculo(expressao, operador) {
         break;
       case '/':
         if (expressao[indexSum+1] == '0') {
-          expressao = [0]
-          console.log(expressao)
           return expressao
         }
         let divide = parseInt(expressao[indexSum-1]) / parseInt(expressao[indexSum+1])
@@ -92,7 +99,7 @@ console.log('2 = 1')
 console.log('3 = 10')
 console.log('4 = ERR DIVBYZERO')
 console.log('5 = 5')
-console.log('6 = 144')
+console.log('6 = 64')
 console.log('7 = 8')
 console.log('8 = ERR DIVBYZERO')
 console.log('9 = ERR SYNTAX')
