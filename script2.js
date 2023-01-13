@@ -12,30 +12,30 @@ fetch('./d14.txt')
       expressao.shift()
       expressao.pop()
       expressao.forEach(function(item, i) { if (item == '') expressao[i] = 'c'; });
-      verificaSeTemParentes(expressao)
-
-      
+      console.log(verificaSeTemParentes(expressao))
     }
   })
 
 function verificaSeTemParentes(expressao) {
-  let eDivididoPorZero = RegExp("/0").test(expressao.join(''))
-  if (eDivididoPorZero) {
-    return console.log('ERR DIVBYZERO')
-  }
   let lastIndexCloseParentheses = expressao.findIndex((elemenet)=> elemenet == ')')
   let firstIndexOpenParentheses = expressao.slice(0, lastIndexCloseParentheses).findLastIndex((elemenet)=> elemenet == '(')
   if (firstIndexOpenParentheses != -1 && lastIndexCloseParentheses != -1) {
     let expressaoInterna = expressao.slice(firstIndexOpenParentheses+2, lastIndexCloseParentheses-1)
     result = verificaSeTemParentes(expressaoInterna)
     expressao.splice(firstIndexOpenParentheses,lastIndexCloseParentheses-firstIndexOpenParentheses+1,result.toString())
+    verificaSeTemParentes(expressao)
   }
-  resolverExpressao(expressao)
-  if (expressao.length > 1) {
-    return console.log('ERR SYNTAX')
+  let eDivididoPorZero = RegExp("/0").test(expressao.join(''))
+  if (eDivididoPorZero) {
+    return 'ERR DIVBYZERO'
+  } else {
+    resolverExpressao(expressao)
+    if (expressao.length > 1 | isNaN(expressao[0])) {
+      return 'ERR SYNTAX'
+    } else {
+      return expressao
+    }
   }
-  console.log(expressao)
-  return expressao
 }
 
 function resolverExpressao(expressao) {
