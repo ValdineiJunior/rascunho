@@ -59,30 +59,30 @@ function calculo(expressao, operador) {
     let indexSum = expressao.findIndex((elemenet) => elemenet == operador)
     if (indexSum > 0 && indexSum < (expressao.length - 1)) {
         switch (operador) {
-            case "c":
-                let concatena = expressao[indexSum - 1] + expressao[indexSum + 1]
-                expressao.splice(indexSum - 1, 3, concatena.toString())
-                break;
-            case "^":
-                let eleva = expressao[indexSum - 1] ** expressao[indexSum + 1]
-                expressao.splice(indexSum - 1, 3, eleva.toString())
-                break;
-            case "*":
-                let multiplica = parseInt(expressao[indexSum - 1]) * parseInt(expressao[indexSum + 1])
-                expressao.splice(indexSum - 1, 3, multiplica.toString())
-                break;
-            case "/":
-                let divide = parseInt(expressao[indexSum - 1]) / parseInt(expressao[indexSum + 1])
-                expressao.splice(indexSum - 1, 3, divide.toString())
-                break;
-            case "+":
-                let soma = parseInt(expressao[indexSum - 1]) + parseInt(expressao[indexSum + 1])
-                expressao.splice(indexSum - 1, 3, soma.toString())
-                break;
-            case "-":
-                let subtrai = parseInt(expressao[indexSum - 1]) - parseInt(expressao[indexSum + 1])
-                expressao.splice(indexSum - 1, 3, subtrai.toString())
-                break;
+        case "c":
+            let concatena = expressao[indexSum - 1] + expressao[indexSum + 1]
+            expressao.splice(indexSum - 1, 3, concatena.toString())
+            break;
+        case "^":
+            let eleva = expressao[indexSum - 1] ** expressao[indexSum + 1]
+            expressao.splice(indexSum - 1, 3, eleva.toString())
+            break;
+        case "*":
+            let multiplica = parseInt(expressao[indexSum - 1]) * parseInt(expressao[indexSum + 1])
+            expressao.splice(indexSum - 1, 3, multiplica.toString())
+            break;
+        case "/":
+            let divide = parseInt(expressao[indexSum - 1]) / parseInt(expressao[indexSum + 1])
+            expressao.splice(indexSum - 1, 3, divide.toString())
+            break;
+        case "+":
+            let soma = parseInt(expressao[indexSum - 1]) + parseInt(expressao[indexSum + 1])
+            expressao.splice(indexSum - 1, 3, soma.toString())
+            break;
+        case "-":
+            let subtrai = parseInt(expressao[indexSum - 1]) - parseInt(expressao[indexSum + 1])
+            expressao.splice(indexSum - 1, 3, subtrai.toString())
+            break;
         }
     }
     return expressao
