@@ -44,28 +44,34 @@ function passeioDoCavalo(casa) {
 }
 let movimento = [[2,1],[2,-1],[1,2],[1,-2],[-1,2],[-1,-2],[-2,1],[-2,-1]];
 
-function movimentos(posicao,x) {
-  for (let index = 0; index < movimentos.length; index++) {
-    const element = movimentos[index];
-    console.log(posicao,movimento,x)
-    novaPsicao = jogada(posicao, movimentos[element],x);
-    if (posicao =! novaPsicao) {
-      index = x.findIndex((element) => element == nextPosition)
-      x = x.slice(index,1)
-      if (x.length === 0) {
-        console.log(x)
+function movimentos(posicao, x) {
+  console.log(posicao,x)
+  for (let index = 0; index < movimento.length; index++) {
+    const element = movimento[index];
+    let novaPsicao = jogada(posicao, element, x);
+    if (posicao != novaPsicao) {
+      index = x.findIndex((element) => element[0] == novaPsicao[0] && element[1] == novaPsicao[1])
+      let newx = [...x]
+      result.push(newx.splice(index,1))
+      if (newx.length === 0) {
+        console.log(result)
+        break
       } else {
-        movimentos(novaPsicao,x)
+        movimentos(novaPsicao,newx)
       }
     }
   }
+  console.log('aqui')
   return posicao;
 }
 
 
 function jogada(posicao, movimento,x) {
   let nextPosition = [posicao[0]+movimento[0],posicao[1]+movimento[1]]
-  index = x.findIndex((element) => element == nextPosition)
+  console.log(nextPosition)
+  console.log(x, nextPosition)
+  let index = x.findIndex((element) => element[0] == nextPosition[0] && element[1] == nextPosition[1])
+  console.log(index)
   if (index != -1) {
     return nextPosition
   } else {
@@ -73,4 +79,4 @@ function jogada(posicao, movimento,x) {
   }
 }
 passeioDoCavalo('c2')
-movimentos(posicao,x)
+movimentos(posicao, x)
