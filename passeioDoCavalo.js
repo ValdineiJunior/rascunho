@@ -1,5 +1,5 @@
-let posicao = [4,4]
-let result = []
+let casa = [4,4]
+let result = [[4,4]]
 // let numbers = [8,7,6,5,4,3,2,1]
 // let line = []
 // for (let i = 0; i < numbers.length; i++) {
@@ -20,7 +20,7 @@ let xadrez = [
   ['21', '22', '23', '24', '25', '26', '27', '28'],
   ['11', '12', '13', '14', '15', '16', '17', '18']]
 console.log(xadrez)
-let x = [
+let possibilidades = [
   [ 8, 1 ], [ 8, 2 ], [ 8, 3 ], [ 8, 4 ], [ 8, 5 ],
   [ 8, 6 ], [ 8, 7 ], [ 8, 8 ], [ 7, 1 ], [ 7, 2 ],
   [ 7, 3 ], [ 7, 4 ], [ 7, 5 ], [ 7, 6 ], [ 7, 7 ],
@@ -28,7 +28,7 @@ let x = [
   [ 6, 5 ], [ 6, 6 ], [ 6, 7 ], [ 6, 8 ], [ 5, 1 ],
   [ 5, 2 ], [ 5, 3 ], [ 5, 4 ], [ 5, 5 ], [ 5, 6 ],
   [ 5, 7 ], [ 5, 8 ], [ 4, 1 ], [ 4, 2 ], [ 4, 3 ],
-  [ 4, 4 ], [ 4, 5 ], [ 4, 6 ], [ 4, 7 ], [ 4, 8 ],
+   [ 4, 5 ], [ 4, 6 ], [ 4, 7 ], [ 4, 8 ],
   [ 3, 1 ], [ 3, 2 ], [ 3, 3 ], [ 3, 4 ], [ 3, 5 ],
   [ 3, 6 ], [ 3, 7 ], [ 3, 8 ], [ 2, 1 ], [ 2, 2 ],
   [ 2, 3 ], [ 2, 4 ], [ 2, 5 ], [ 2, 6 ], [ 2, 7 ],
@@ -42,41 +42,90 @@ function passeioDoCavalo(casa) {
   posicaoinicial[0] = (referenciaCasas.findIndex((elemenet) => elemenet === posicaoinicial[0]) + 1).toString()
   console.log(posicaoinicial)
 }
-let movimento = [[2,1],[2,-1],[1,2],[1,-2],[-1,2],[-1,-2],[-2,1],[-2,-1]];
+let jogadas = [[2,1],[2,-1],[1,2],[1,-2],[-1,2],[-1,-2],[-2,1],[-2,-1]];
+let lastMoveFind = 3
 
-function movimentos(posicao, x) {
-  console.log(posicao,x)
-  for (let index = 0; index < movimento.length; index++) {
-    const element = movimento[index];
-    let novaPsicao = jogada(posicao, element, x);
-    if (posicao != novaPsicao) {
-      index = x.findIndex((element) => element[0] == novaPsicao[0] && element[1] == novaPsicao[1])
-      let newx = [...x]
-      result.push(newx.splice(index,1))
-      if (newx.length === 0) {
+function jogada(casa, jogada, possibilidades) {
+  let novaCasa = [casa[0]+jogada[0],casa[1]+jogada[1]]
+  let index = possibilidades.findIndex((element) => element[0] == novaCasa[0] && element[1] == novaCasa[1])
+  if (index != -1) {
+    return novaCasa
+  } else {
+    return casa
+  }
+}
+
+let count = 0
+function movimentos(casa, jogadas, possibilidades, result) {
+  let novaCasa = [...casa]
+  let novasJogadas = [...jogadas]
+  let novasPossibilidades = [...possibilidades]
+  let novoResult = [...result]
+  for (let index = 0; index < novasJogadas.length; index++) {
+    const existeUmaProximaJogada = novasJogadas[index];
+    novaCasa = jogada(novaCasa, existeUmaProximaJogada, novasPossibilidades);
+    if (casa != novaCasa) {
+      console.log('nova jogada')
+      
+      // if(proximasJogadas.length > 0) {
+      //   movimentos(novaCasa,proximasJogadas,novasPossibilidades, novoResult)
+      // }
+      // movimentos(novaCasa,novasJogadas,novasPossibilidades)
+      let corte = novasPossibilidades.findIndex((element) => element[0] == novaCasa[0] && element[1] == novaCasa[1])
+      let apeend = novasPossibilidades.splice(corte,1)
+      console.log(novasPossibilidades)
+      console.log(apeend)
+      novoResult.push(apeend[0])
+      console.log(novaCasa)
+      console.log(novasPossibilidades)
+      console.log(novoResult)
+      if (novasPossibilidades.length === 0) {
         console.log(result)
-        break
+        return result
       } else {
-        movimentos(novaPsicao,newx)
+        if (count < 3) {
+          movimentos(novaCasa, novasJogadas, novasPossibilidades, novoResult)
+          count ++
+        }
       }
     }
   }
+  
+
+  // movimentos(casa, jogadas, possibilidades, result)
   console.log('aqui')
-  return posicao;
+  return result;
 }
 
 
-function jogada(posicao, movimento,x) {
-  let nextPosition = [posicao[0]+movimento[0],posicao[1]+movimento[1]]
-  console.log(nextPosition)
-  console.log(x, nextPosition)
-  let index = x.findIndex((element) => element[0] == nextPosition[0] && element[1] == nextPosition[1])
-  console.log(index)
-  if (index != -1) {
-    return nextPosition
-  } else {
-    return posicao
-  }
-}
 passeioDoCavalo('c2')
-movimentos(posicao, x)
+console.log(result)
+movimentos(casa, jogadas, possibilidades, result)
+
+
+// function verifyWord(array, input, responseArray) {
+//   let newArray = [...array];
+//   let newInput = [...input];
+//   const newresponseArray = [...responseArray];
+//   for (let index = 0; index < newArray.length; index++) {
+//       const word = newArray[index];
+//       const wordFitInTheNewInput = (cutTheInput(newInput, word)) !== newInput;
+//       if (wordFitInTheNewInput) {
+//           const arrayHasMoreThanTwoElements = newArray.length > 2;
+//           if (arrayHasMoreThanTwoElements) {
+//               const arrayWithoutCurrentElementToSearchForOtherCombinations = newArray.slice(index + 1);
+//               verifyWord(arrayWithoutCurrentElementToSearchForOtherCombinations, newInput, newresponseArray);
+//           }
+//           newInput = cutTheInput(newInput, word);
+//           newresponseArray.push(word);
+//           const inputIsEmpty = newInput.length === 0;
+//           if (inputIsEmpty) {
+//               console.log(newresponseArray.join(" "));
+//           } else {
+//               newArray = newArray.slice(index + 1);
+//               verifyWord(newArray, newInput, newresponseArray);
+//           }
+//           break;
+//       }
+//   }
+// }
