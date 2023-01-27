@@ -64,42 +64,38 @@ function movimentos(casa, jogadas, possibilidades, result) {
   for (let index = 0; index < novasJogadas.length; index++) {
     const existeUmaProximaJogada = novasJogadas[index];
     novaCasa = jogada(novaCasa, existeUmaProximaJogada, novasPossibilidades);
-    if (casa != novaCasa) {
-      console.log('nova jogada')
-      
+    let casaEIgualNovaCasa = casa[0] == novaCasa[0] && casa[1] == novaCasa[1]
+    if (!casaEIgualNovaCasa) {
       // if(proximasJogadas.length > 0) {
       //   movimentos(novaCasa,proximasJogadas,novasPossibilidades, novoResult)
       // }
       // movimentos(novaCasa,novasJogadas,novasPossibilidades)
       let corte = novasPossibilidades.findIndex((element) => element[0] == novaCasa[0] && element[1] == novaCasa[1])
       let apeend = novasPossibilidades.splice(corte,1)
-      console.log(novasPossibilidades)
-      console.log(apeend)
       novoResult.push(apeend[0])
-      console.log(novaCasa)
-      console.log(novasPossibilidades)
-      console.log(novoResult)
-      if (novasPossibilidades.length === 0) {
-        console.log(result)
-        return result
+      if (novasPossibilidades.length < 5) {
+        console.table(novoResult)
+        return novoResult
       } else {
-        if (count < 3) {
           movimentos(novaCasa, novasJogadas, novasPossibilidades, novoResult)
-          count ++
-        }
+          if (novasPossibilidades.length < 5) {
+            return novoResult
+          }
+          let devolver = novoResult.splice((novoResult.length-1),1)
+          novasPossibilidades.push(devolver[0])
+          novaCasa = [...casa]
+          // count ++
+        
       }
     }
   }
-  
-
   // movimentos(casa, jogadas, possibilidades, result)
   console.log('aqui')
-  return result;
+  return novoResult;
 }
 
 
 passeioDoCavalo('c2')
-console.log(result)
 movimentos(casa, jogadas, possibilidades, result)
 
 
