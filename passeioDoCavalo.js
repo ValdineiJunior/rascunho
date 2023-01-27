@@ -64,26 +64,10 @@ function movimentos(casa, jogadas, possibilidades, result) {
     novaCasa = jogada(novaCasa, existeUmaProximaJogada, novasPossibilidades);
     let casaEIgualNovaCasa = casa[0] == novaCasa[0] && casa[1] == novaCasa[1]
     if (!casaEIgualNovaCasa) {
-      // if(proximasJogadas.length > 0) {
-      //   movimentos(novaCasa,proximasJogadas,novasPossibilidades, novoResult)
-      // }
-      // movimentos(novaCasa,novasJogadas,novasPossibilidades)
       let corte = novasPossibilidades.findIndex((element) => element[0] == novaCasa[0] && element[1] == novaCasa[1])
       novoResult.push(novasPossibilidades[corte])
       novasPossibilidades[corte] = novasPossibilidades.pop()
-      if (novasPossibilidades.length < 10) {
-        console.table(novoResult)
-        break
-      } else {
-          // movimentos(novaCasa, novasJogadas, novasPossibilidades, novoResult)
-          if (novasPossibilidades.length < 10) {
-            break
-          }
-          let devolver = novoResult.pop()
-          novasPossibilidades.push(devolver)
-          novaCasa = [...casa]
-          // count ++
-      }
+      
     }
   }
   // movimentos(casa, jogadas, possibilidades, result)

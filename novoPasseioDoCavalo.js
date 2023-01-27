@@ -44,16 +44,9 @@ function movimentos(casa, jogadas, possibilidades, result) {
     let casaEIgualNovaCasa = casa[0] == novaCasa[0] && casa[1] == novaCasa[1]
     if (!casaEIgualNovaCasa) {
       contabilizaONovoMovimento(novaCasa, novasPossibilidades, novoResult)
-      if (novasPossibilidades.length === 0) {
-        console.log(novoResult)
-      } else {
-        movimentos(novaCasa, novasJogadas, novasPossibilidades, novoResult)
-        retornaMovimento(casa,novasPossibilidades, novoResult)
-        movimentos(novaCasa, novasJogadas, novasPossibilidades, novoResult)
-        break
-      }
     }
   }
+  return novoResult
 }
     
 passeioDoCavalo('c2')
