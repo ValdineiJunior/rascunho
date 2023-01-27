@@ -19,7 +19,6 @@ let xadrez = [
   ['31', '32', '33', '34', '35', '36', '37', '38'],
   ['21', '22', '23', '24', '25', '26', '27', '28'],
   ['11', '12', '13', '14', '15', '16', '17', '18']]
-console.log(xadrez)
 let possibilidades = [
   [ 8, 1 ], [ 8, 2 ], [ 8, 3 ], [ 8, 4 ], [ 8, 5 ],
   [ 8, 6 ], [ 8, 7 ], [ 8, 8 ], [ 7, 1 ], [ 7, 2 ],
@@ -40,7 +39,6 @@ function passeioDoCavalo(casa) {
   const referenciaCasas = ['a','b','c','d','e','f','g','h']
   let posicaoinicial = casa.split('')
   posicaoinicial[0] = (referenciaCasas.findIndex((elemenet) => elemenet === posicaoinicial[0]) + 1).toString()
-  console.log(posicaoinicial)
 }
 let jogadas = [[2,1],[2,-1],[1,2],[1,-2],[-1,2],[-1,-2],[-2,1],[-2,-1]];
 let lastMoveFind = 3
@@ -71,32 +69,30 @@ function movimentos(casa, jogadas, possibilidades, result) {
       // }
       // movimentos(novaCasa,novasJogadas,novasPossibilidades)
       let corte = novasPossibilidades.findIndex((element) => element[0] == novaCasa[0] && element[1] == novaCasa[1])
-      let apeend = novasPossibilidades.splice(corte,1)
-      novoResult.push(apeend[0])
-      if (novasPossibilidades.length < 5) {
+      novoResult.push(novasPossibilidades[corte])
+      novasPossibilidades[corte] = novasPossibilidades.pop()
+      if (novasPossibilidades.length < 10) {
         console.table(novoResult)
-        return novoResult
+        break
       } else {
-          movimentos(novaCasa, novasJogadas, novasPossibilidades, novoResult)
-          if (novasPossibilidades.length < 5) {
-            return novoResult
+          // movimentos(novaCasa, novasJogadas, novasPossibilidades, novoResult)
+          if (novasPossibilidades.length < 10) {
+            break
           }
-          let devolver = novoResult.splice((novoResult.length-1),1)
-          novasPossibilidades.push(devolver[0])
+          let devolver = novoResult.pop()
+          novasPossibilidades.push(devolver)
           novaCasa = [...casa]
           // count ++
-        
       }
     }
   }
   // movimentos(casa, jogadas, possibilidades, result)
-  console.log('aqui')
   return novoResult;
 }
 
 
 passeioDoCavalo('c2')
-movimentos(casa, jogadas, possibilidades, result)
+console.log(movimentos(casa, jogadas, possibilidades, result))
 
 
 // function verifyWord(array, input, responseArray) {
