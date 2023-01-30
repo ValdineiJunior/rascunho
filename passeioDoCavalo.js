@@ -1,6 +1,6 @@
 let casa = [1,1]
 let result = [[1,1]]
-let numbers = [5,4,3,2,1]
+// let numbers = [5,4,3,2,1]
 // let line = []
 // for (let i = 0; i < numbers.length; i++) {
 //   const elemento = numbers[i];
@@ -10,23 +10,14 @@ let numbers = [5,4,3,2,1]
 //   }
 // }
 // console.log(line)
-let xadrez = [
-  ['81', '82', '83', '84', '85', '86', '87', '88'],
-  ['71', '72', '73', '74', '75', '76', '77', '78'],
-  ['61', '62', '63', '64', '65', '66', '67', '68'],
-  ['51', '52', '53', '54', '55', '56', '57', '58'],
-  ['41', '42', '43', '44', '45', '46', '47', '48'],
-  ['31', '32', '33', '34', '35', '36', '37', '38'],
-  ['21', '22', '23', '24', '25', '26', '27', '28'],
-  ['11', '12', '13', '14', '15', '16', '17', '18']]
 let possibilidades = [
   [ 5, 1 ], [ 5, 2 ], [ 5, 3 ],
   [ 5, 4 ], [ 5, 5 ], [ 4, 1 ],
   [ 4, 2 ], [ 4, 3 ], [ 4, 4 ],
   [ 4, 5 ], [ 3, 1 ], [ 3, 2 ],
   [ 3, 3 ], [ 3, 4 ], [ 3, 5 ],
-  [ 2, 1 ], [ 2, 3 ],
-  [ 2, 4 ], [ 2, 5 ], [ 1, 1 ],
+  [ 2, 1 ], [ 2, 2 ], [ 2, 3 ],
+  [ 2, 4 ], [ 2, 5 ],
   [ 1, 2 ], [ 1, 3 ], [ 1, 4 ],
   [ 1, 5 ]
 ]
@@ -58,21 +49,31 @@ function movimentos(novaCasa, possibilidades, result) {
       }
 }
 
+function movimentosReverso(novaCasa, possibilidades, result) { 
+  possibilidades.push(result.pop())
+  novaCasa = result[result.length-1]
+}
+
 
 passeioDoCavalo('c2')
 
-let jogadas = [[2,1],[2,-1],[1,2],[1,-2],[-1,2],[-1,-2],[-2,1],[-2,-1]];
-for (let index = 0; index < jogadas.length; index++) {
-  const jogada = jogadas[index];
-  let novaCasa = verificaSeAJogadaEValida(casa, jogada, possibilidades);
-  let casaEIgualNovaCasa = casa[0] == novaCasa[0] && casa[1] == novaCasa[1]
-  console.log(casaEIgualNovaCasa)
-  if (!casaEIgualNovaCasa) {
-    console.table(result)
-    movimentos(novaCasa, possibilidades, result)
-    console.table(result)
+function novoMovimento(casa, possibilidades) {
+  let jogadas = [[2,1],[2,-1],[1,2],[1,-2],[-1,2],[-1,-2],[-2,1],[-2,-1]];
+  for (let index = 0; index < jogadas.length; index++) {
+    const jogada = jogadas[index];
+    let novaCasa = verificaSeAJogadaEValida(casa, jogada, possibilidades);
+    let casaEIgualNovaCasa = casa[0] == novaCasa[0] && casa[1] == novaCasa[1]
+    if (!casaEIgualNovaCasa) {
+      movimentos(novaCasa, possibilidades, result)
+      novoMovimento(novaCasa, possibilidades, result)
+      if (possibilidades.length > 0) {
+        movimentosReverso(novaCasa, possibilidades, result)
+      } else {
+        return
+      }
+    }
   }
-  console.log(result)
 }
-console.log(result)
-movimentos(casa, possibilidades, result)
+
+novoMovimento(casa, possibilidades, result)
+console.table(result)
