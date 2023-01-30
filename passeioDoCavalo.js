@@ -1,34 +1,32 @@
-let casa = [1,1]
-let result = [[1,1]]
-// let numbers = [5,4,3,2,1]
-// let line = []
-// for (let i = 0; i < numbers.length; i++) {
-//   const elemento = numbers[i];
-//   for (let j = 4; j >= 0; j--) {
-//     const elementos = numbers[j];
-//     line.push([elemento,elementos])
-//   }
-// }
-// console.log(line)
-let possibilidades = [
-  [ 5, 1 ], [ 5, 2 ], [ 5, 3 ],
-  [ 5, 4 ], [ 5, 5 ], [ 4, 1 ],
-  [ 4, 2 ], [ 4, 3 ], [ 4, 4 ],
-  [ 4, 5 ], [ 3, 1 ], [ 3, 2 ],
-  [ 3, 3 ], [ 3, 4 ], [ 3, 5 ],
-  [ 2, 1 ], [ 2, 2 ], [ 2, 3 ],
-  [ 2, 4 ], [ 2, 5 ],
-  [ 1, 2 ], [ 1, 3 ], [ 1, 4 ],
-  [ 1, 5 ]
-]
-
-function passeioDoCavalo(casa) {
+const readlineSync = require("readline-sync");
+const chessNotation = readlineSync.question("Digite uma casa em notacao algebrica de xadrez que sera a posicao inicial do cavalo: ");
+function passeioDoCavalo(chessNotation) {
   const referenciaCasas = ['a','b','c','d','e','f','g','h']
-  let posicaoinicial = casa.split('')
-  posicaoinicial[0] = (referenciaCasas.findIndex((elemenet) => elemenet === posicaoinicial[0]) + 1).toString()
+  let posicaoinicial = chessNotation.split('')
+  posicaoinicial[1] = parseInt(posicaoinicial[1])
+  posicaoinicial[0] = (referenciaCasas.findIndex((elemenet) => elemenet === posicaoinicial[0]) + 1)
+  return posicaoinicial
 }
 
+let casa = passeioDoCavalo(chessNotation)
+let result = [passeioDoCavalo(chessNotation)]
 
+function montarTabuleiro() {
+  let numbers = [8,7,6,5,4,3,2,1]
+  let line = []
+  for (let i = 0; i < numbers.length; i++) {
+    const elemento = numbers[i];
+    for (let j = 7; j >= 0; j--) {
+      const elementos = numbers[j];
+      line.push([elemento,elementos])
+    }
+  }
+  return line
+}
+let possibilidades = montarTabuleiro()
+
+let indexFirstHouse = possibilidades.findIndex((element) => element[0] == casa[0] && element[1] == casa[1])
+possibilidades.splice(indexFirstHouse,1)
 function verificaSeAJogadaEValida(casa, jogada, possibilidades) {
   let novaCasa = [casa[0]+jogada[0],casa[1]+jogada[1]]
   let index = possibilidades.findIndex((element) => element[0] == novaCasa[0] && element[1] == novaCasa[1])
@@ -55,7 +53,6 @@ function movimentosReverso(novaCasa, possibilidades, result) {
 }
 
 
-passeioDoCavalo('c2')
 
 function novoMovimento(casa, possibilidades) {
   let jogadas = [[2,1],[2,-1],[1,2],[1,-2],[-1,2],[-1,-2],[-2,1],[-2,-1]];
@@ -76,4 +73,10 @@ function novoMovimento(casa, possibilidades) {
 }
 
 novoMovimento(casa, possibilidades, result)
-console.table(result)
+const referenciaCasas = ['a','b','c','d','e','f','g','h']
+for (let index = 0; index < result.length; index++) {
+  let element = result[index];
+  element[0] = referenciaCasas[element[0]-1]
+  element = element[0] + element[1]
+  console.log(element)
+}
