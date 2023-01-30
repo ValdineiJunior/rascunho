@@ -12,11 +12,11 @@ let casa = passeioDoCavalo(chessNotation)
 let result = [passeioDoCavalo(chessNotation)]
 
 function montarTabuleiro() {
-  let numbers = [8,7,6,5,4,3,2,1]
+  let numbers = [6,5,4,3,2,1]
   let line = []
   for (let i = 0; i < numbers.length; i++) {
     const elemento = numbers[i];
-    for (let j = 7; j >= 0; j--) {
+    for (let j = 5; j >= 0; j--) {
       const elementos = numbers[j];
       line.push([elemento,elementos])
     }
