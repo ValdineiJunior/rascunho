@@ -35,15 +35,11 @@ function verificaSeAJogadaEValida(casa, jogada, possibilidades) {
   let max = possibilidades.length-1
   let resto = (min + max)%2
   let chute = ((min + max - resto)/2)
-  console.table(possibilidades)
-  console.table(novaCasa)
-  console.log(possibilidades[chute][0],novaCasa[0],possibilidades[chute][1],novaCasa[1])
   if (possibilidades[chute][0] == novaCasa[0] && possibilidades[chute][1] == novaCasa[1]) {
     existeONumero = true
   } else {
     if (((novaCasa[0]*10) + novaCasa[1]) < (possibilidades[chute][0]*10) + possibilidades[chute][1]) {
       max = chute - 1
-      console.log('max')
       if (max < min) {
         return existeONumero
       } else {
@@ -51,7 +47,7 @@ function verificaSeAJogadaEValida(casa, jogada, possibilidades) {
       }
     } else {
       min = chute + 1
-      if (possibilidades.length > 1) {
+      if (min > max) {
         verificaSeAJogadaEValida(casa, jogada, possibilidades.slice(min,max))
       } else {
         return existeONumero
@@ -83,8 +79,6 @@ function novoMovimento(casa, possibilidades) {
     const jogada = jogadas[index];
     let novaCasa = [casa[0]+jogada[0],casa[1]+jogada[1]]
     let novaCasaEValida = false
-    console.log
-    console.log(novaCasa[0] < 5 && novaCasa[0] > 1 &&novaCasa[1] < 5 && novaCasa[1] > 1)
     if (novaCasa[0] < 5 && novaCasa[0] > 1 &&novaCasa[1] < 5 && novaCasa[1] > 1) {
       novaCasaEValida = verificaSeAJogadaEValida(casa, jogada, possibilidades);
     } else {
