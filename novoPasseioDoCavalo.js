@@ -1,65 +1,105 @@
-let casa = [4,4]
-let result = [[4,4]]
-let possibilidades = [
-  [ 8, 1 ], [ 8, 2 ], [ 8, 3 ], [ 8, 4 ], [ 8, 5 ],
-  [ 8, 6 ], [ 8, 7 ], [ 8, 8 ], [ 7, 1 ], [ 7, 2 ],
-  [ 7, 3 ], [ 7, 4 ], [ 7, 5 ], [ 7, 6 ], [ 7, 7 ],
-  [ 7, 8 ], [ 6, 1 ], [ 6, 2 ], [ 6, 3 ], [ 6, 4 ],
-  [ 6, 5 ], [ 6, 6 ], [ 6, 7 ], [ 6, 8 ], [ 5, 1 ],
-  [ 5, 2 ], [ 5, 3 ], [ 5, 4 ], [ 5, 5 ], [ 5, 6 ],
-  [ 5, 7 ], [ 5, 8 ], [ 4, 1 ], [ 4, 2 ], [ 4, 3 ],
-   [ 4, 5 ], [ 4, 6 ], [ 4, 7 ], [ 4, 8 ],
-  [ 3, 1 ], [ 3, 2 ], [ 3, 3 ], [ 3, 4 ], [ 3, 5 ],
-  [ 3, 6 ], [ 3, 7 ], [ 3, 8 ], [ 2, 1 ], [ 2, 2 ],
-  [ 2, 3 ], [ 2, 4 ], [ 2, 5 ], [ 2, 6 ], [ 2, 7 ],
-  [ 2, 8 ], [ 1, 1 ], [ 1, 2 ], [ 1, 3 ], [ 1, 4 ],
-  [ 1, 5 ], [ 1, 6 ], [ 1, 7 ], [ 1, 8 ]
-]
-
-function passeioDoCavalo(casa) {
+// const readlineSync = require("readline-sync");
+// const chessNotation = readlineSync.question("Digite uma casa em notacao algebrica de xadrez que sera a posicao inicial do cavalo: ");
+const chessNotation = "a1"
+function passeioDoCavalo(chessNotation) {
   const referenciaCasas = ['a','b','c','d','e','f','g','h']
-  let posicaoinicial = casa.split('')
-  posicaoinicial[0] = (referenciaCasas.findIndex((elemenet) => elemenet === posicaoinicial[0]) + 1).toString()
-}
-let jogadas = [[2,1],[2,-1],[1,2],[1,-2],[-1,2],[-1,-2],[-2,1],[-2,-1]];
-
-function jogada(casa, jogada, possibilidades) {
-  let novaCasa = [casa[0]+jogada[0],casa[1]+jogada[1]]
-  let index = possibilidades.findIndex((element) => element[0] == novaCasa[0] && element[1] == novaCasa[1])
-  if (index != -1) {
-    return novaCasa
-  } else {
-    return casa
-  }
+  let posicaoinicial = chessNotation.split('')
+  posicaoinicial[1] = parseInt(posicaoinicial[1])
+  posicaoinicial[0] = (referenciaCasas.findIndex((elemenet) => elemenet === posicaoinicial[0]) + 1)
+  return posicaoinicial
 }
 
-function movimentos(casa, jogadas, possibilidades, result) {
-  let novaCasa = [...casa]
-  let novasJogadas = [...jogadas]
-  let novasPossibilidades = [...possibilidades]
-  let novoResult = [...result]
-  for (let index = 0; index < novasJogadas.length; index++) {
-    const existeUmaProximaJogada = novasJogadas[index];
-    novaCasa = jogada(novaCasa, existeUmaProximaJogada, novasPossibilidades);
-    let casaEIgualNovaCasa = casa[0] == novaCasa[0] && casa[1] == novaCasa[1]
-    if (!casaEIgualNovaCasa) {
-      contabilizaONovoMovimento(novaCasa, novasPossibilidades, novoResult)
+let casa = passeioDoCavalo(chessNotation)
+let result = [casa]
+
+function montarTabuleiro() {
+  let numbers = [1, 2, 3, 4, 5]
+  let line = []
+  for (let i = 0; i < numbers.length; i++) {
+    const elemento = numbers[i];
+    for (let j = 0; j <= 4; j++) {
+      const elementos = numbers[j];
+      line.push([elemento, elementos])
     }
   }
-  return novoResult
+  return line
 }
-    
-passeioDoCavalo('c2')
-let continua = true
-console.log(movimentos(casa, jogadas, possibilidades, result))
+let possibilidades = montarTabuleiro()
 
-function contabilizaONovoMovimento(novaCasa,novasPossibilidades, novoResult) {
-  let corte = novasPossibilidades.findIndex((element) => element[0] == novaCasa[0] && element[1] == novaCasa[1])
-  novoResult.push(novasPossibilidades[corte])
-  novasPossibilidades[corte] = novasPossibilidades.pop()
+let indexFirstHouse = possibilidades.findIndex((element) => element[0] == casa[0] && element[1] == casa[1])
+possibilidades.splice(indexFirstHouse,1)
+
+function verificaSeAJogadaEValida(casa, jogada, possibilidades) {
+  let novaCasa = [casa[0]+jogada[0],casa[1]+jogada[1]]
+  let min = 0
+  let max = possibilidades.length - 1
+  let existeONumero = false
+  let resto = (min + max) % 2
+  let chute = ((min + max - resto) / 2)
+  if (possibilidades[chute][0] == novaCasa[0] && possibilidades[chute][1] == novaCasa[1]) {
+    return novaCasa
+  } else {
+    if (((novaCasa[0] * 10) + novaCasa[1]) < (possibilidades[chute][0] * 10) + possibilidades[chute][1]) {
+      max = chute - 1
+      if (max < min) {
+        return casa
+      } else {
+        return verificaSeAJogadaEValida(casa, jogada, possibilidades.slice(min, max + 1))
+      }
+    } else {
+      min = chute + 1
+      if (min > max) {
+        return casa
+      } else {
+        return verificaSeAJogadaEValida(casa, jogada, possibilidades.slice(min, max + 1))
+      }
+    }
+  }
 }
 
-function retornaMovimento(novaCasa,novasPossibilidades, novoResult) {
-  let devolver = novoResult.pop()
-  novasPossibilidades.push(devolver)
+function realocaAJogadaParaOResultado(novaCasa, possibilidades, result) {
+  console.table(possibilidades)
+  console.log(novaCasa)
+  let corte = possibilidades.findIndex((element) => element[0] == novaCasa[0] && element[1] == novaCasa[1])
+  result.push(possibilidades[corte])
+  possibilidades.splice(corte, 1)
+}
+
+function movimentosReverso(novaCasa, possibilidades, result) { 
+  console.log('aqui')
+  possibilidades.push(result.pop())
+  novaCasa = result[result.length-1]
+  console.log(novaCasa)
+  possibilidades.sort()
+  console.table(possibilidades)
+}
+
+function novoMovimento(casa, possibilidades) {
+  let jogadas = [[2,1],[2,-1],[1,2],[1,-2],[-1,2],[-1,-2],[-2,1],[-2,-1]];
+  for (let index = 0; index < jogadas.length; index++) {
+    const jogada = jogadas[index];
+    let novaCasa = verificaSeAJogadaEValida(casa, jogada, possibilidades);
+    let casaEIgualNovaCasa = casa[0] == novaCasa[0] && casa[1] == novaCasa[1]
+    if (!casaEIgualNovaCasa) {
+      realocaAJogadaParaOResultado(novaCasa, possibilidades, result)
+      if (possibilidades.length < 1) {
+        return
+      }
+      novoMovimento(novaCasa, possibilidades, result)
+      if (possibilidades.length > 0) {
+        movimentosReverso(novaCasa, possibilidades, result)
+      } else {
+        return
+      }
+    }
+  }
+}
+console.table(result)
+novoMovimento(casa, possibilidades, result)
+const referenciaCasas = ['a','b','c','d','e','f','g','h']
+for (let index = 0; index < result.length; index++) {
+  let element = result[index];
+  element[0] = referenciaCasas[element[0]-1]
+  element = element[0] + element[1]
+  console.log(element)
 }
