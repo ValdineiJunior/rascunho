@@ -11,7 +11,7 @@ function passeioDoCavalo(chessNotation) {
 
 let casa = passeioDoCavalo(chessNotation)
 let result = [casa]
-
+let corte = 0
 function montarTabuleiro() {
   let numbers = [1, 2, 3, 4, 5]
   let line = []
@@ -29,13 +29,14 @@ let possibilidades = montarTabuleiro()
 let indexFirstHouse = possibilidades.findIndex((element) => element[0] == casa[0] && element[1] == casa[1])
 possibilidades.splice(indexFirstHouse,1)
 
+console.log(possibilidades)
 function verificaSeAJogadaEValida(casa, jogada, possibilidades) {
   let novaCasa = [casa[0]+jogada[0],casa[1]+jogada[1]]
   let min = 0
   let max = possibilidades.length - 1
-  let existeONumero = false
   let resto = (min + max) % 2
   let chute = ((min + max - resto) / 2)
+  console.log(chute)
   if (possibilidades[chute][0] == novaCasa[0] && possibilidades[chute][1] == novaCasa[1]) {
     return novaCasa
   } else {
@@ -58,20 +59,15 @@ function verificaSeAJogadaEValida(casa, jogada, possibilidades) {
 }
 
 function realocaAJogadaParaOResultado(novaCasa, possibilidades, result) {
-  console.table(possibilidades)
-  console.log(novaCasa)
   let corte = possibilidades.findIndex((element) => element[0] == novaCasa[0] && element[1] == novaCasa[1])
   result.push(possibilidades[corte])
   possibilidades.splice(corte, 1)
 }
 
 function movimentosReverso(novaCasa, possibilidades, result) { 
-  console.log('aqui')
   possibilidades.push(result.pop())
   novaCasa = result[result.length-1]
-  console.log(novaCasa)
   possibilidades.sort()
-  console.table(possibilidades)
 }
 
 function novoMovimento(casa, possibilidades) {
@@ -94,8 +90,8 @@ function novoMovimento(casa, possibilidades) {
     }
   }
 }
-console.table(result)
 novoMovimento(casa, possibilidades, result)
+console.table(result)
 const referenciaCasas = ['a','b','c','d','e','f','g','h']
 for (let index = 0; index < result.length; index++) {
   let element = result[index];
