@@ -56,7 +56,7 @@ function verificaSeAJogadaEValida(casa, jogada, possibilidades, min, max, novaCa
   }
 }
 
-function realocaAJogadaParaOResultado(novaCasa, possibilidades, result) {
+function movimentos(novaCasa, possibilidades, result) {
   let corte = possibilidades.findIndex((element) => element[0] == novaCasa[0] && element[1] == novaCasa[1])
   result.push(possibilidades[corte])
   possibilidades.splice(corte, 1)
@@ -83,7 +83,7 @@ function novoMovimento(casa, possibilidades) {
       novaCasaEValida = false
     }
     if (novaCasaEValida) {
-      realocaAJogadaParaOResultado(novaCasa, possibilidades, result)
+      movimentos(novaCasa, possibilidades, result)
       novoMovimento(novaCasa, possibilidades, result)
       if (possibilidades.length > 0) {
         movimentosReverso(novaCasa, possibilidades, result)

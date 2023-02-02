@@ -2,7 +2,7 @@
 // const chessNotation = readlineSync.question("Digite uma casa em notacao algebrica de xadrez que sera a posicao inicial do cavalo: ");
 const chessNotation = "a1"
 function passeioDoCavalo(chessNotation) {
-  const referenciaCasas = ['a','b','c','d','e','f','g','h']
+  const referenciaCasas = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
   let posicaoinicial = chessNotation.split('')
   posicaoinicial[1] = parseInt(posicaoinicial[1])
   posicaoinicial[0] = (referenciaCasas.findIndex((elemenet) => elemenet === posicaoinicial[0]) + 1)
@@ -12,6 +12,7 @@ function passeioDoCavalo(chessNotation) {
 let casa = passeioDoCavalo(chessNotation)
 let result = [casa]
 let corte = 0
+let soma = true
 function montarTabuleiro() {
   let numbers = [1, 2, 3, 4, 5]
   let line = []
@@ -27,53 +28,69 @@ function montarTabuleiro() {
 let possibilidades = montarTabuleiro()
 
 let indexFirstHouse = possibilidades.findIndex((element) => element[0] == casa[0] && element[1] == casa[1])
-possibilidades.splice(indexFirstHouse,1)
+possibilidades.splice(indexFirstHouse, 1)
+let newPossibilidades = [...possibilidades]
 
-console.log(possibilidades)
 function verificaSeAJogadaEValida(casa, jogada, possibilidades) {
-  let novaCasa = [casa[0]+jogada[0],casa[1]+jogada[1]]
-  let min = 0
-  let max = possibilidades.length - 1
-  let resto = (min + max) % 2
-  let chute = ((min + max - resto) / 2)
-  console.log(chute)
-  if (possibilidades[chute][0] == novaCasa[0] && possibilidades[chute][1] == novaCasa[1]) {
-    return novaCasa
-  } else {
-    if (((novaCasa[0] * 10) + novaCasa[1]) < (possibilidades[chute][0] * 10) + possibilidades[chute][1]) {
-      max = chute - 1
-      if (max < min) {
-        return casa
-      } else {
-        return verificaSeAJogadaEValida(casa, jogada, possibilidades.slice(min, max + 1))
-      }
+  let novaCasa = [casa[0] + jogada[0], casa[1] + jogada[1]]
+  if (novaCasa[0] < 6 & novaCasa[0] > 0 & novaCasa[1] < 6 & novaCasa[1] > 0) {
+    let min = 0
+    let max = possibilidades.length - 1
+    let resto = (min + max) % 2
+    let chute = ((min + max - resto) / 2)
+    if (soma) {
+      corte = corte + chute
     } else {
-      min = chute + 1
-      if (min > max) {
-        return casa
+      corte = corte - chute
+    }
+    if (possibilidades[chute][0] == novaCasa[0] && possibilidades[chute][1] == novaCasa[1]) {
+      console.log('corte', corte)
+      return novaCasa
+    } else {
+      if (((novaCasa[0] * 10) + novaCasa[1]) < (possibilidades[chute][0] * 10) + possibilidades[chute][1]) {
+        max = chute - 1
+        corte = corte - 1
+        soma = false
+        if (max < min) {
+          return casa
+        } else {
+          return verificaSeAJogadaEValida(casa, jogada, possibilidades.slice(min, max + 1))
+        }
       } else {
-        return verificaSeAJogadaEValida(casa, jogada, possibilidades.slice(min, max + 1))
+        min = chute + 1
+        corte = corte + 1
+        soma = true
+        if (min > max) {
+          return casa
+        } else {
+          return verificaSeAJogadaEValida(casa, jogada, possibilidades.slice(min, max + 1))
+        }
       }
     }
+  } else {
+    return casa
   }
+
 }
 
 function realocaAJogadaParaOResultado(novaCasa, possibilidades, result) {
-  let corte = possibilidades.findIndex((element) => element[0] == novaCasa[0] && element[1] == novaCasa[1])
-  result.push(possibilidades[corte])
-  possibilidades.splice(corte, 1)
+  let corteCorreto = possibilidades.findIndex((element) => element[0] == novaCasa[0] && element[1] == novaCasa[1])
+  console.log('corteCorreto', corteCorreto)
+  result.push(possibilidades[corteCorreto])
+  possibilidades.splice(corteCorreto, 1)
 }
 
-function movimentosReverso(novaCasa, possibilidades, result) { 
+function movimentosReverso(novaCasa, possibilidades, result) {
   possibilidades.push(result.pop())
-  novaCasa = result[result.length-1]
+  novaCasa = result[result.length - 1]
   possibilidades.sort()
 }
 
 function novoMovimento(casa, possibilidades) {
-  let jogadas = [[2,1],[2,-1],[1,2],[1,-2],[-1,2],[-1,-2],[-2,1],[-2,-1]];
+  let jogadas = [[2, 1], [2, -1], [1, 2], [1, -2], [-1, 2], [-1, -2], [-2, 1], [-2, -1]];
   for (let index = 0; index < jogadas.length; index++) {
     const jogada = jogadas[index];
+    corte = 0
     let novaCasa = verificaSeAJogadaEValida(casa, jogada, possibilidades);
     let casaEIgualNovaCasa = casa[0] == novaCasa[0] && casa[1] == novaCasa[1]
     if (!casaEIgualNovaCasa) {
@@ -92,10 +109,10 @@ function novoMovimento(casa, possibilidades) {
 }
 novoMovimento(casa, possibilidades, result)
 console.table(result)
-const referenciaCasas = ['a','b','c','d','e','f','g','h']
+const referenciaCasas = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 for (let index = 0; index < result.length; index++) {
   let element = result[index];
-  element[0] = referenciaCasas[element[0]-1]
+  element[0] = referenciaCasas[element[0] - 1]
   element = element[0] + element[1]
   console.log(element)
 }
