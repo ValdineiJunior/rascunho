@@ -44,12 +44,12 @@ function verificaSeAJogadaEValida(casa, jogada, possibilidades) {
       corte = corte - chute
     }
     if (possibilidades[chute][0] == novaCasa[0] && possibilidades[chute][1] == novaCasa[1]) {
-      console.log('corte', corte)
       return novaCasa
     } else {
       if (((novaCasa[0] * 10) + novaCasa[1]) < (possibilidades[chute][0] * 10) + possibilidades[chute][1]) {
         max = chute - 1
-        corte = corte - 1
+        console.log(possibilidades.length)
+        corte = corte - 1 - (possibilidades.length % 2)
         soma = false
         if (max < min) {
           return casa
@@ -76,6 +76,7 @@ function verificaSeAJogadaEValida(casa, jogada, possibilidades) {
 function realocaAJogadaParaOResultado(novaCasa, possibilidades, result) {
   let corteCorreto = possibilidades.findIndex((element) => element[0] == novaCasa[0] && element[1] == novaCasa[1])
   console.log('corteCorreto', corteCorreto)
+  console.log('corte', corte)
   result.push(possibilidades[corteCorreto])
   possibilidades.splice(corteCorreto, 1)
 }
@@ -91,11 +92,12 @@ function novoMovimento(casa, possibilidades) {
   for (let index = 0; index < jogadas.length; index++) {
     const jogada = jogadas[index];
     corte = 0
+    soma = true
     let novaCasa = verificaSeAJogadaEValida(casa, jogada, possibilidades);
     let casaEIgualNovaCasa = casa[0] == novaCasa[0] && casa[1] == novaCasa[1]
     if (!casaEIgualNovaCasa) {
       realocaAJogadaParaOResultado(novaCasa, possibilidades, result)
-      if (possibilidades.length < 1) {
+      if (possibilidades.length < 15) {
         return
       }
       novoMovimento(novaCasa, possibilidades, result)
