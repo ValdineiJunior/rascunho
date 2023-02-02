@@ -14,11 +14,11 @@ let result = [casa]
 let corte = 0
 let soma = true
 function montarTabuleiro() {
-  let numbers = [1, 2, 3, 4, 5]
+  let numbers = [1, 2, 3, 4, 5, 6, 7, 8]
   let line = []
   for (let i = 0; i < numbers.length; i++) {
     const elemento = numbers[i];
-    for (let j = 0; j <= 4; j++) {
+    for (let j = 0; j <= 7; j++) {
       const elementos = numbers[j];
       line.push([elemento, elementos])
     }
@@ -27,13 +27,32 @@ function montarTabuleiro() {
 }
 let possibilidades = montarTabuleiro()
 
-let indexFirstHouse = possibilidades.findIndex((element) => element[0] == casa[0] && element[1] == casa[1])
-possibilidades.splice(indexFirstHouse, 1)
+let possibilidadesBrancas = []
+let possibilidadesPretas = []
+
+for (let index = 0; index < possibilidades.length; index++) {
+  const element = possibilidades[index];
+  if ((element[0] + element[1]) % 2 == 0) {
+    possibilidadesPretas = [...possibilidadesPretas, element]
+  } else {
+    possibilidadesBrancas = [...possibilidadesBrancas, element]
+  }
+}
+
+let indexFirstHouse = possibilidadesPretas.findIndex((element) => element[0] == casa[0] && element[1] == casa[1])
+if (indexFirstHouse == -1) {
+  indexFirstHouse = possibilidadesBrancas.findIndex((element) => element[0] == casa[0] && element[1] == casa[1])
+  possibilidadesBrancas.splice(indexFirstHouse, 1)
+} else {
+  possibilidadesPretas.splice(indexFirstHouse, 1)
+}
+
 let newPossibilidades = [...possibilidades]
 
 function verificaSeAJogadaEValida(casa, jogada, possibilidades) {
+  console.log(possibilidades)
   let novaCasa = [casa[0] + jogada[0], casa[1] + jogada[1]]
-  if (novaCasa[0] < 6 & novaCasa[0] > 0 & novaCasa[1] < 6 & novaCasa[1] > 0) {
+  if (novaCasa[0] < 9 & novaCasa[0] > 0 & novaCasa[1] < 9 & novaCasa[1] > 0) {
     let min = 0
     let max = possibilidades.length - 1
     let resto = (min + max) % 2
@@ -86,17 +105,27 @@ function movimentosReverso(novaCasa, possibilidades, result) {
   possibilidades.sort()
 }
 
-function novoMovimento(casa, possibilidades) {
+function novoMovimento(casa, possibilidadesPretas, possibilidadesBrancas) {
+  console.table(result)
   let jogadas = [[2, 1], [2, -1], [1, 2], [1, -2], [-1, 2], [-1, -2], [-2, 1], [-2, -1]];
   for (let index = 0; index < jogadas.length; index++) {
     const jogada = jogadas[index];
     corte = 0
     soma = true
-    let novaCasa = verificaSeAJogadaEValida(casa, jogada, possibilidades);
+    let novaCasa
+    let verificaPretas = (casa[0] + jogada[0] + casa[1] + jogada[1]) % 2 === 0
+    if (verificaPretas) {
+      novaCasa = verificaSeAJogadaEValida(casa, jogada, possibilidadesPretas);
+    }
+    novaCasa = verificaSeAJogadaEValida(casa, jogada, possibilidadesBrancas);
     let casaEIgualNovaCasa = casa[0] == novaCasa[0] && casa[1] == novaCasa[1]
     if (!casaEIgualNovaCasa) {
-      realocaAJogadaParaOResultado(novaCasa, possibilidades, result)
-      if (possibilidades.length < 1) {
+      if (verificaPretas) {
+        realocaAJogadaParaOResultado(novaCasa, possibilidadesPretas, result)
+      }
+
+      realocaAJogadaParaOResultado(novaCasa, possibilidadesBrancas, result)
+      if (possibilidadesPretas.length < 32 && possibilidadesBrancas < 32) {
         return
       }
       novoMovimento(novaCasa, possibilidades, result)
@@ -108,7 +137,7 @@ function novoMovimento(casa, possibilidades) {
     }
   }
 }
-novoMovimento(casa, possibilidades, result)
+novoMovimento(casa, possibilidadesPretas, possibilidadesBrancas, result)
 console.table(result)
 const referenciaCasas = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 for (let index = 0; index < result.length; index++) {
