@@ -107,6 +107,7 @@ function movimentosReverso(novaCasa, possibilidades, result) {
 }
 
 function novoMovimento(casa, possibilidades) {
+
   const jogadas = [
     [2, 1],
     [2, -1],
@@ -117,6 +118,7 @@ function novoMovimento(casa, possibilidades) {
     [-2, 1],
     [-2, -1]
   ];
+
   for (let index = 0; index < jogadas.length; index++) {
     const jogada = jogadas[index];
     corte = 0;
@@ -147,3 +149,13 @@ for (let index = 0; index < result.length; index++) {
   element = element[0] + element[1];
   console.log(element);
 }
+
+// 02	03	04	05	06	07	08	09
+// 03	04	05	06	07	08	09	10
+// 04	05	06	07	08	09	10	11
+// 05	06	07	08	09	10	11	12
+// 06	07	08	09	10	11	12	13
+// 07	08	09	10	11	12	13	14
+// 08	09	10	11	12	13	14	15
+// 09	10	11	12	13	14	15	16
+
