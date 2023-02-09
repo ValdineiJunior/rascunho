@@ -31,7 +31,10 @@ const possibilidades = montarTabuleiro();
 const indexFirstHouse = possibilidades.findIndex(
   (element) => element[0] === casa[0] && element[1] === casa[1]
 );
+const indexLastHouse = ((possibilidades.length/2) - indexFirstHouse) + (possibilidades.length/2)
 possibilidades.splice(indexFirstHouse, 1);
+possibilidades.splice((indexLastHouse-2), 1);
+console.table(possibilidades)
 
 function verificaSeAJogadaEValida(casa, jogada, possibilidades) {
   const novaCasa = [casa[0] + jogada[0], casa[1] + jogada[1]];
@@ -96,6 +99,8 @@ function verificaSeAJogadaEValida(casa, jogada, possibilidades) {
 }
 
 function realocaAJogadaParaOResultado(novaCasa, possibilidades, result) {
+  // console.log(possibilidades.length)
+  // console.log(possibilidades[corte])
   result.push(possibilidades[corte]);
   possibilidades.splice(corte, 1);
 }
