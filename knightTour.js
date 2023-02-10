@@ -37,68 +37,78 @@ possibilidades.splice(indexFirstHouse, 1);
 resultLastPart.push(possibilidades[indexLastHouse-2]);
 possibilidades.splice((indexLastHouse-2), 1);
 
+// function verificaSeAJogadaEValida(casa, jogada, possibilidades) {
+//   // if (resultFirstPart.length > 15)
+//   // console.table(resultFirstPart)
+//   // console.table(resultLastPart)
+//   const novaCasa = [casa[0] + jogada[0], casa[1] + jogada[1]];
+//   if (
+//     (novaCasa[0] < 7) &
+//     (novaCasa[0] > 0) &
+//     (novaCasa[1] < 7) &
+//     (novaCasa[1] > 0)
+//   ) {
+//     let min = 0;
+//     let max = possibilidades.length - 1;
+//     const resto = (min + max) % 2;
+//     const chute = (min + max - resto) / 2;
+//     if (soma) {
+//       corte = corte + chute;
+//     } else {
+//       if (possibilidades.length % 2 === 0) {
+//         corte = corte - 1;
+//       }
+//       corte = corte - chute;
+//     }
+//     if (
+//       possibilidades[chute][0] === novaCasa[0] &&
+//       possibilidades[chute][1] === novaCasa[1]
+//     ) {
+//       return novaCasa;
+//     } else {
+//       if (
+//         novaCasa[0] * 10 + novaCasa[1] <
+//         possibilidades[chute][0] * 10 + possibilidades[chute][1]
+//       ) {
+//         max = chute - 1;
+//         corte = corte - 1;
+//         soma = false;
+//         if (max < min) {
+//           return casa;
+//         } else {
+//           return verificaSeAJogadaEValida(
+//             casa,
+//             jogada,
+//             possibilidades.slice(min, max + 1)
+//           );
+//         }
+//       } else {
+//         min = chute + 1;
+//         corte = corte + 1;
+//         soma = true;
+//         if (min > max) {
+//           return casa;
+//         } else {
+//           return verificaSeAJogadaEValida(
+//             casa,
+//             jogada,
+//             possibilidades.slice(min, max + 1)
+//           );
+//         }
+//       }
+//     }
+//   } else {
+//     return casa;
+//   }
+// }
+
 function verificaSeAJogadaEValida(casa, jogada, possibilidades) {
-  // if (resultFirstPart.length > 15)
-  // console.table(resultFirstPart)
-  // console.table(resultLastPart)
-  const novaCasa = [casa[0] + jogada[0], casa[1] + jogada[1]];
-  if (
-    (novaCasa[0] < 7) &
-    (novaCasa[0] > 0) &
-    (novaCasa[1] < 7) &
-    (novaCasa[1] > 0)
-  ) {
-    let min = 0;
-    let max = possibilidades.length - 1;
-    const resto = (min + max) % 2;
-    const chute = (min + max - resto) / 2;
-    if (soma) {
-      corte = corte + chute;
-    } else {
-      if (possibilidades.length % 2 === 0) {
-        corte = corte - 1;
-      }
-      corte = corte - chute;
-    }
-    if (
-      possibilidades[chute][0] === novaCasa[0] &&
-      possibilidades[chute][1] === novaCasa[1]
-    ) {
-      return novaCasa;
-    } else {
-      if (
-        novaCasa[0] * 10 + novaCasa[1] <
-        possibilidades[chute][0] * 10 + possibilidades[chute][1]
-      ) {
-        max = chute - 1;
-        corte = corte - 1;
-        soma = false;
-        if (max < min) {
-          return casa;
-        } else {
-          return verificaSeAJogadaEValida(
-            casa,
-            jogada,
-            possibilidades.slice(min, max + 1)
-          );
-        }
-      } else {
-        min = chute + 1;
-        corte = corte + 1;
-        soma = true;
-        if (min > max) {
-          return casa;
-        } else {
-          return verificaSeAJogadaEValida(
-            casa,
-            jogada,
-            possibilidades.slice(min, max + 1)
-          );
-        }
-      }
-    }
+  let novaCasa = [casa[0]+jogada[0],casa[1]+jogada[1]]
+  let index = possibilidades.findIndex((element) => element[0] == novaCasa[0] && element[1] == novaCasa[1])
+  if (index != -1) {
+    return novaCasa
   } else {
-    return casa;
+    return casa
   }
 }
 
@@ -164,7 +174,7 @@ function novoMovimento(casa, possibilidades) {
     const casaEIgualNovaCasa = casa[0] === novaCasa[0] && casa[1] === novaCasa[1];
     if (!casaEIgualNovaCasa) {
       realocaAJogadaParaOResultado(novaCasa, possibilidades, resultFirstPart, resultLastPart);
-      if (possibilidades.length < 5) {
+      if (possibilidades.length < 7) {
         return;
       }
       novoMovimento(novaCasa, possibilidades);
@@ -192,12 +202,3 @@ for (let index = resultLastPart.length - 1; index >= 0; index--) {
   element = element[0] + element[1];
   console.log(element);
 }
-
-// 02	03	04	05	06	07	08	09
-// 03	04	05	06	07	08	09	10
-// 04	05	06	07	08	09	10	11
-// 05	06	07	08	09	10	11	12
-// 06	07	08	09	10	11	12	13
-// 07	08	09	10	11	12	13	14
-// 08	09	10	11	12	13	14	15
-// 09	10	11	12	13	14	15	16
