@@ -38,8 +38,9 @@ resultLastPart.push(possibilidades[indexLastHouse-2]);
 possibilidades.splice((indexLastHouse-2), 1);
 
 function verificaSeAJogadaEValida(casa, jogada, possibilidades) {
-  if (resultFirstPart.length > 10)
-  console.table(resultFirstPart)
+  // if (resultFirstPart.length > 15)
+  // console.table(resultFirstPart)
+  // console.table(resultLastPart)
   const novaCasa = [casa[0] + jogada[0], casa[1] + jogada[1]];
   if (
     (novaCasa[0] < 7) &
@@ -104,19 +105,42 @@ function verificaSeAJogadaEValida(casa, jogada, possibilidades) {
 function realocaAJogadaParaOResultado(novaCasa, possibilidades, resultFirstPart) {
   // console.log(possibilidades.length)
   // console.log(possibilidades[corte])
-  const indexTraz = ((possibilidades.length/2) - corte) + (possibilidades.length/2)
+  console.table(possibilidades)
+  console.log(possibilidades.length)
+  const indexTraz = (((possibilidades.length/2) - corte) + (possibilidades.length/2)) - 1
+  // console.log("---------",corte)
+  // console.log("---------",indexTraz)
+  console.log(possibilidades[corte])
+  console.log(possibilidades[indexTraz])
   resultFirstPart.push(possibilidades[corte]);
-  resultLastPart.push(possibilidades, indexTraz)
-  possibilidades.splice(corte, 1);
-  possibilidades.splice(indexTraz, 1);
+  resultLastPart.push(possibilidades[indexTraz])
+  // console.log(corte)
+  // console.log(indexTraz)
+  // console.table(possibilidades)
+  if (corte > indexTraz) {
+    possibilidades.splice(indexTraz, 1);
+    possibilidades.splice(corte-1, 1);
+  } else {
+    possibilidades.splice(corte, 1);
+    possibilidades.splice(indexTraz-1, 1);
+  }
+  
+  // console.table(possibilidades)
   novaCasa = resultFirstPart[resultFirstPart.length - 1]
+  console.log(possibilidades.length)
 }
 
-function movimentosReverso(novaCasa, possibilidades, resultFirstPart) {
+function movimentosReverso(novaCasa, possibilidades, resultFirstPart, resultLastPart) {
+  console.log('aqui')
+  console.table(possibilidades)
   possibilidades.push(resultFirstPart.pop());
+  // console.log(possibilidades)
   novaCasa = resultFirstPart[resultFirstPart.length - 1];
+  // console.table(resultLastPart)
   possibilidades.push(resultLastPart.pop());
+  // console.log(possibilidades)
   possibilidades.sort();
+  console.table(possibilidades)
 }
 
 function novoMovimento(casa, possibilidades) {
@@ -136,7 +160,6 @@ function novoMovimento(casa, possibilidades) {
     const jogada = jogadas[index];
     corte = 0;
     soma = true;
-
     const novaCasa = verificaSeAJogadaEValida(casa, jogada, possibilidades);
     const casaEIgualNovaCasa = casa[0] === novaCasa[0] && casa[1] === novaCasa[1];
     if (!casaEIgualNovaCasa) {
@@ -146,7 +169,7 @@ function novoMovimento(casa, possibilidades) {
       }
       novoMovimento(novaCasa, possibilidades);
       if (possibilidades.length > 0) {
-        movimentosReverso(novaCasa, possibilidades, resultFirstPart);
+        movimentosReverso(novaCasa, possibilidades, resultFirstPart, resultLastPart);
       } else {
         return;
       }
@@ -158,6 +181,13 @@ console.table(resultFirstPart);
 const referenciaCasas = ["a", "b", "c", "d", "e", "f", "g", "h"];
 for (let index = 0; index < resultFirstPart.length; index++) {
   let element = resultFirstPart[index];
+  element[0] = referenciaCasas[element[0] - 1];
+  element = element[0] + element[1];
+  console.log(element);
+}
+console.table(resultLastPart);
+for (let index = resultLastPart.length - 1; index >= 0; index--) {
+  let element = resultLastPart[index];
   element[0] = referenciaCasas[element[0] - 1];
   element = element[0] + element[1];
   console.log(element);
