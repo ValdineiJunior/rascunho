@@ -1,7 +1,7 @@
 const notacaoInicial = "a1";
 const casa = converteNotacaoInicialEmNumero(notacaoInicial);
 const result = [];
-const tamanhoTabuleiro = 6
+const tamanhoTabuleiro = 5
 const possibilidades = montarPossibilidadesDoTabuleiro(tamanhoTabuleiro);
 const possibilidadesBordaTabuleiro = coletarBordasDoTabuleiro(possibilidades, tamanhoTabuleiro)
 console.table(possibilidades)
@@ -65,33 +65,23 @@ function movimentosReverso(novaCasa, possibilidades, result) {
 }
 
 function novoMovimento(casa, possibilidades) {
-    const jogadas = [
-        [2, 1],
-        [2, -1],
-        [1, 2],
-        [1, -2],
-        [-1, 2],
-        [-1, -2],
-        [-2, 1],
-        [-2, -1]
-    ];
-    for (let index = 0; index < jogadas.length; index++) {
-        const jogada = jogadas[index];
+    const jogadasAprimorado = coletaJogadasPossiveisIniciandoPelasBordas(casa, possibilidades, possibilidadesBordaTabuleiro)
+    for (let index = 0; index < jogadasAprimorado.length; index++) {
+        const jogada = jogadasAprimorado[index];
         const novaCasa = verificaSeAJogadaEValida(casa, jogada, possibilidades);
         const casaEIgualNovaCasa = casa[0] === novaCasa[0] && casa[1] === novaCasa[1];
-        if (!casaEIgualNovaCasa) {
-            movimentos(novaCasa, possibilidades, result);
-            novoMovimento(novaCasa, possibilidades, result);
-            if (possibilidades.length > 0) {
-                movimentosReverso(novaCasa, possibilidades, result);
-            } else {
-                return;
-            }
+        movimentos(novaCasa, possibilidades, result);
+        novoMovimento(novaCasa, possibilidades, result);
+        if (possibilidades.length > 0) {
+            movimentosReverso(novaCasa, possibilidades, result);
+        } else {
+            return;
         }
+        
     }
 }
 
-function organizaPelasMelhoresJogadas(casa, possibilidades) {
+function coletaJogadasPossiveisIniciandoPelasBordas(casa, possibilidades, possibilidadesBordaTabuleiro) {
     const jogadas = [
         [2, 1],
         [2, -1],
@@ -102,6 +92,21 @@ function organizaPelasMelhoresJogadas(casa, possibilidades) {
         [-2, 1],
         [-2, -1]
     ];
+    let jogadasPossiveis = []
+    for (let i = 0; i < jogadas.length; i++) {
+        const jogada = jogadas[i];
+        const alvo = [casa[0] + jogada[0], casa[1] + jogada[1]];
+        const indexBorda = possibilidadesBordaTabuleiro.findIndex((element) => element[0] === alvo[0] && element[1] === alvo[1]);
+        const indexCentro = possibilidades.findIndex((element) => element[0] === alvo[0] && element[1] === alvo[1]);
+    if (indexBorda !== -1 && indexCentro !== -1) {
+        jogadasPossiveis.push(jogada);
+    } else {
+        if (indexCentro !== -1) {
+            jogadasPossiveis.push(jogada)
+        }
+    }
+    }
+    return jogadasPossiveis
 }
 
 function coletarBordasDoTabuleiro(possibilidades, tamanhoTabuleiro) {
