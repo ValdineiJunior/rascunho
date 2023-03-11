@@ -1,9 +1,10 @@
 const notacaoInicial = "a1";
 const casa = converteNotacaoInicialEmNumero(notacaoInicial);
 const result = [];
-const tamanhoTabuleiro = 5
+const tamanhoTabuleiro = 8
 const possibilidades = montarPossibilidadesDoTabuleiro(tamanhoTabuleiro);
 const possibilidadesBordaTabuleiro = coletarBordasDoTabuleiro(possibilidades, tamanhoTabuleiro)
+const possibilidadesSegundaCasaApartirDaBordaTabuleiro = coletarSegundaCasaApartirDaBordaDoTabuleiro(possibilidades, tamanhoTabuleiro)
 console.table(possibilidades)
 movimentos(casa, possibilidades, result);
 novoMovimento(casa, possibilidades, result);
@@ -35,18 +36,6 @@ function montarPossibilidadesDoTabuleiro(tamanho) {
     return tabuleiro;
 }
 
-function verificaSeAJogadaEValida(casa, jogada, possibilidades) {
-    const novaCasa = [casa[0] + jogada[0], casa[1] + jogada[1]];
-    const index = possibilidades.findIndex(
-        (element) => element[0] === novaCasa[0] && element[1] === novaCasa[1]
-    );
-    if (index !== -1) {
-        return novaCasa;
-    } else {
-        return casa;
-    }
-}
-
 function movimentos(novaCasa, possibilidades, result) {
     const corte = possibilidades.findIndex(
         (element) => element[0] === novaCasa[0] && element[1] === novaCasa[1]
@@ -65,11 +54,10 @@ function movimentosReverso(novaCasa, possibilidades, result) {
 }
 
 function novoMovimento(casa, possibilidades) {
-    const jogadasAprimorado = coletaJogadasPossiveisIniciandoPelasBordas(casa, possibilidades, possibilidadesBordaTabuleiro)
+    const jogadasAprimorado = coletaJogadasPossiveisIniciandoPelasBordas(casa, possibilidades, possibilidadesBordaTabuleiro, possibilidadesSegundaCasaApartirDaBordaTabuleiro)
     for (let index = 0; index < jogadasAprimorado.length; index++) {
         const jogada = jogadasAprimorado[index];
-        const novaCasa = verificaSeAJogadaEValida(casa, jogada, possibilidades);
-        const casaEIgualNovaCasa = casa[0] === novaCasa[0] && casa[1] === novaCasa[1];
+        const novaCasa = [casa[0] + jogada[0], casa[1] + jogada[1]];
         movimentos(novaCasa, possibilidades, result);
         novoMovimento(novaCasa, possibilidades, result);
         if (possibilidades.length > 0) {
@@ -77,7 +65,7 @@ function novoMovimento(casa, possibilidades) {
         } else {
             return;
         }
-        
+
     }
 }
 
@@ -92,20 +80,24 @@ function coletaJogadasPossiveisIniciandoPelasBordas(casa, possibilidades, possib
         [-2, 1],
         [-2, -1]
     ];
-    let jogadasPossiveis = []
+    let jogadasBorda = []
+    let jogadasCentro = []
+    let jogadasSegundacasaApartirdaBorda = []
     for (let i = 0; i < jogadas.length; i++) {
         const jogada = jogadas[i];
-        const alvo = [casa[0] + jogada[0], casa[1] + jogada[1]];
-        const indexBorda = possibilidadesBordaTabuleiro.findIndex((element) => element[0] === alvo[0] && element[1] === alvo[1]);
-        const indexCentro = possibilidades.findIndex((element) => element[0] === alvo[0] && element[1] === alvo[1]);
-    if (indexBorda !== -1 && indexCentro !== -1) {
-        jogadasPossiveis.push(jogada);
-    } else {
-        if (indexCentro !== -1) {
-            jogadasPossiveis.push(jogada)
+        const alvoCentro = [casa[0] + jogada[0], casa[1] + jogada[1]];
+        const indexBorda = possibilidadesBordaTabuleiro.findIndex((element) => element[0] === alvoCentro[0] && element[1] === alvoCentro[1]);
+        const indexSegundaCasaApartirBorda = possibilidadesSegundaCasaApartirDaBordaTabuleiro.findIndex((element) => element[0] === alvoCentro[0] && element[1] === alvoCentro[1]);
+        const indexCentro = possibilidades.findIndex((element) => element[0] === alvoCentro[0] && element[1] === alvoCentro[1]);
+        if (indexBorda !== -1 && indexCentro !== -1) {
+            jogadasBorda.push(jogada);
+        } else if (indexSegundaCasaApartirBorda !== -1 && indexCentro !== -1)
+            jogadasSegundacasaApartirdaBorda.push(jogada)
+        if (indexBorda === -1 && indexCentro !== -1) {
+            jogadasCentro.push(jogada)
         }
     }
-    }
+    const jogadasPossiveis = jogadasBorda.concat(jogadasSegundacasaApartirdaBorda).concat(jogadasCentro)
     return jogadasPossiveis
 }
 
@@ -113,9 +105,22 @@ function coletarBordasDoTabuleiro(possibilidades, tamanhoTabuleiro) {
     let bordas = []
     for (let index = 0; index < possibilidades.length; index++) {
         const element = possibilidades[index];
+        const coletandoDiagonalSuperior = element[0] < 2 | element[1] < 2
+        const coletandoDiagonalInferior = element[0] > tamanhoTabuleiro - 1 | element[1] > tamanhoTabuleiro - 1
+        if (coletandoDiagonalSuperior | coletandoDiagonalInferior) {
+            bordas.push(element)
+        }
+    }
+    return bordas
+}
+
+function coletarSegundaCasaApartirDaBordaDoTabuleiro(possibilidades, tamanhoTabuleiro) {
+    let bordas = []
+    for (let index = 0; index < possibilidades.length; index++) {
+        const element = possibilidades[index];
         const coletandoDiagonalSuperior = element[0] < 3 | element[1] < 3
-        const coletandoDiagonalInferior = element [0] > tamanhoTabuleiro - 2 | element[1] > tamanhoTabuleiro - 2
-        if ( coletandoDiagonalSuperior | coletandoDiagonalInferior ) {
+        const coletandoDiagonalInferior = element[0] > tamanhoTabuleiro - 2 | element[1] > tamanhoTabuleiro - 2
+        if (coletandoDiagonalSuperior | coletandoDiagonalInferior) {
             bordas.push(element)
         }
     }
