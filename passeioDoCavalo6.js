@@ -1,16 +1,14 @@
-const file = process.argv[2];
-const notacaoInicial = file;
-const casaInicial = converteNotacaoInicialEmNumero(notacaoInicial);
-const resultado = [];
-const tamanhoTabuleiro = 8;
+const notacaoInicial = "a4";
+const casa = converteNotacaoInicialEmNumero(notacaoInicial);
+const result = [];
+const tamanhoTabuleiro = 8
 const possibilidades = montarPossibilidadesDoTabuleiro(tamanhoTabuleiro);
-
-contabilizandoMovimento(casaInicial, possibilidades, resultado);
-passeioDoCavalo(casaInicial, possibilidades, resultado);
-
-console.table(resultado);
-for (let index = 0; index < resultado.length; index++) {
-    const notacaoNumerica = resultado[index];
+const possibilidadesBordaTabuleiro = coletarBordasDoTabuleiro(possibilidades, tamanhoTabuleiro)
+const possibilidadesSegundaCasaApartirDaBordaTabuleiro = coletarSegundaCasaApartirDaBordaDoTabuleiro(possibilidades, tamanhoTabuleiro)
+movimentos(casa, possibilidades, result);
+novoMovimento(casa, possibilidades, result);
+for (let index = 0; index < result.length; index++) {
+    const notacaoNumerica = result[index];
     console.log(converteNotacaoInicialEmNumero(notacaoNumerica));
 }
 
@@ -32,69 +30,56 @@ function converteNotacaoInicialEmNumero(notacaoInicial) {
 }
 
 function montarPossibilidadesDoTabuleiro(tamanho) {
-    const colunas = [];
+    const numbers = [];
     for (let index = tamanho; index > 0; index--) {
-        colunas.push(index);
+        numbers.push(index);
     }
-    const possibilidadesDoTabuleiro = [];
-    for (let i = 0; i < colunas.length; i++) {
-        const linha = colunas[i];
-        for (let j = colunas.length - 1; j >= 0; j--) {
-            const coluna = colunas[j];
-            possibilidadesDoTabuleiro.push([linha, coluna]);
+    const tabuleiro = [];
+    for (let i = 0; i < numbers.length; i++) {
+        const linha = numbers[i];
+        for (let j = numbers.length - 1; j >= 0; j--) {
+            const coluna = numbers[j];
+            tabuleiro.push([linha, coluna]);
         }
     }
-    return possibilidadesDoTabuleiro;
+    return tabuleiro;
 }
 
-function coletarBordasDoTabuleiro(possibilidades, tamanhoTabuleiro, casasApartirDaBorda) {
-    const casasPertencentesABorda = [];
-    for (let index = 0; index < possibilidades.length; index++) {
-        const casas = possibilidades[index];
-        const coletandoDiagonalSuperior = casas[0] <= 2 - casasApartirDaBorda | casas[1] <= 2 - casasApartirDaBorda;
-        const coletandoDiagonalInferior = casas[0] > tamanhoTabuleiro - casasApartirDaBorda | casas[1] > tamanhoTabuleiro - casasApartirDaBorda;
-        if (coletandoDiagonalSuperior | coletandoDiagonalInferior) {
-            casasPertencentesABorda.push(casas);
-        }
-    }
-    return casasPertencentesABorda;
-}
-
-function contabilizandoMovimento(novaCasa, possibilidades, result) {
-    const casaASerMovimentada = possibilidades.findIndex(
+function movimentos(novaCasa, possibilidades, result) {
+    const corte = possibilidades.findIndex(
         (element) => element[0] === novaCasa[0] && element[1] === novaCasa[1]
     );
-    result.push(possibilidades[casaASerMovimentada]);
-    if (casaASerMovimentada < possibilidades.length - 1) {
-        possibilidades[casaASerMovimentada] = possibilidades.pop();
+    result.push(possibilidades[corte]);
+    if (corte < possibilidades.length - 1) {
+        possibilidades[corte] = possibilidades.pop();
     } else {
         possibilidades.pop();
     }
 }
 
-function reverteUltimoMovimento(novaCasa, possibilidades, resultado) {
-    possibilidades.push(resultado.pop());
-    novaCasa = resultado[resultado.length - 1];
+function movimentosReverso(novaCasa, possibilidades, result) {
+    possibilidades.push(result.pop());
+    novaCasa = result[result.length - 1];
 }
 
-function passeioDoCavalo(casaAtual, possibilidades) {
-    const jogadasPossiveis = coletaJogadasPossiveisDandoPreferenciaPelasComMenoresPossibilidades(casaAtual, possibilidades);
-    for (let index = 0; index < jogadasPossiveis.length; index++) {
-        const jogada = jogadasPossiveis[index];
-        const novaCasa = [casaAtual[0] + jogada[0], casaAtual[1] + jogada[1]];
-        // console.log(resultado)
-        contabilizandoMovimento(novaCasa, possibilidades, resultado);
-        passeioDoCavalo(novaCasa, possibilidades, resultado);
-        if (possibilidades.length > 2) {
-            reverteUltimoMovimento(novaCasa, possibilidades, resultado);
+function novoMovimento(casa, possibilidades) {
+    const jogadasAprimorado = coletaJogadasPossiveisIniciandoPelasBordas(casa, possibilidades, possibilidadesBordaTabuleiro, possibilidadesSegundaCasaApartirDaBordaTabuleiro)
+    for (let index = 0; index < jogadasAprimorado.length; index++) {
+        const jogada = jogadasAprimorado[index];
+        const novaCasa = [casa[0] + jogada[0], casa[1] + jogada[1]];
+        movimentos(novaCasa, possibilidades, result);
+        novoMovimento(novaCasa, possibilidades, result);
+        if (possibilidades.length > 0) {
+            movimentosReverso(novaCasa, possibilidades, result);
         } else {
             return;
         }
+
     }
 }
 
-function coletaJogadasPossiveisDandoPreferenciaPelasComMenoresPossibilidades(casa, possibilidades) {
-    const movimentosPossiveisParaOCavalo = [
+function coletaJogadasPossiveisIniciandoPelasBordas(casa, possibilidades, possibilidadesBordaTabuleiro) {
+    const jogadas = [
         [2, 1],
         [2, -1],
         [1, 2],
@@ -104,34 +89,49 @@ function coletaJogadasPossiveisDandoPreferenciaPelasComMenoresPossibilidades(cas
         [-2, 1],
         [-2, -1]
     ];
-    const possibilidadesCantos = [[1, 1], [8, 8], [1, 8], [8, 1]];
-    const possibilidadesBordaTabuleiro = coletarBordasDoTabuleiro(possibilidades, tamanhoTabuleiro, 1);
-    const possibilidadesSegundaCasaApartirDaBordaTabuleiro = coletarBordasDoTabuleiro(possibilidades, tamanhoTabuleiro, 2);
-    const movimentosQueVaoParaOsCantos = [];
-    const movimentosQueVaoParaBorda = [];
-    const MovimentosQueVaoParaSegundaCasaApartirDaBordas = [];
-    const movimentosQueVaoParaOCentro = [];
-    for (let i = 0; i < movimentosPossiveisParaOCavalo.length; i++) {
-        const movimentoDoCavalo = movimentosPossiveisParaOCavalo[i];
-        const casaAlvo = [casa[0] + movimentoDoCavalo[0], casa[1] + movimentoDoCavalo[1]];
-        const indexPossibilidadesRestantes = possibilidades.findIndex((element) => element[0] === casaAlvo[0] && element[1] === casaAlvo[1]);
-        const indexSegundaCasaApartirDaBorda = possibilidadesSegundaCasaApartirDaBordaTabuleiro.findIndex((element) => element[0] === casaAlvo[0] && element[1] === casaAlvo[1]);
-        const indexCasaDaBorda = possibilidadesBordaTabuleiro.findIndex((element) => element[0] === casaAlvo[0] && element[1] === casaAlvo[1]);
-        const indexCantos = possibilidadesCantos.findIndex((element) => element[0] === casaAlvo[0] && element[1] === casaAlvo[1]);
-        const jogadaMoveParaABordaEEstaNasPossibilidades = indexCasaDaBorda !== -1 && indexPossibilidadesRestantes !== -1;
-        const jogadaMoveParaSegundaCasaApartirDaBordaEEstaNasPossibilidades = indexSegundaCasaApartirDaBorda !== -1 && indexPossibilidadesRestantes !== -1;
-        const jogadaMoveParaOCentroEEstaNasPossibilidades = indexCasaDaBorda === -1 && indexPossibilidadesRestantes !== -1;
-        const jogadaMoveParaOCantoEEstaNasPossibilidades = indexCantos === -1 && indexPossibilidadesRestantes !== -1;
-        if (jogadaMoveParaOCantoEEstaNasPossibilidades) {
-            movimentosQueVaoParaOsCantos.push(movimentoDoCavalo);
-        } else if (jogadaMoveParaABordaEEstaNasPossibilidades) {
-            movimentosQueVaoParaBorda.push(movimentoDoCavalo);
-        } else if (jogadaMoveParaSegundaCasaApartirDaBordaEEstaNasPossibilidades) {
-            MovimentosQueVaoParaSegundaCasaApartirDaBordas.push(movimentoDoCavalo);
-        } else if (jogadaMoveParaOCentroEEstaNasPossibilidades) {
-            movimentosQueVaoParaOCentro.push(movimentoDoCavalo);
+    let jogadasBorda = []
+    let jogadasCentro = []
+    let jogadasSegundacasaApartirdaBorda = []
+    for (let i = 0; i < jogadas.length; i++) {
+        const jogada = jogadas[i];
+        const alvoCentro = [casa[0] + jogada[0], casa[1] + jogada[1]];
+        const indexBorda = possibilidadesBordaTabuleiro.findIndex((element) => element[0] === alvoCentro[0] && element[1] === alvoCentro[1]);
+        const indexSegundaCasaApartirBorda = possibilidadesSegundaCasaApartirDaBordaTabuleiro.findIndex((element) => element[0] === alvoCentro[0] && element[1] === alvoCentro[1]);
+        const indexCentro = possibilidades.findIndex((element) => element[0] === alvoCentro[0] && element[1] === alvoCentro[1]);
+        if (indexBorda !== -1 && indexCentro !== -1) {
+            jogadasBorda.push(jogada);
+        } else if (indexSegundaCasaApartirBorda !== -1 && indexCentro !== -1)
+            jogadasSegundacasaApartirdaBorda.push(jogada)
+        if (indexBorda === -1 && indexCentro !== -1) {
+            jogadasCentro.push(jogada)
         }
     }
-    const jogadasPossiveisOrdenadasPelasPeriferias = movimentosQueVaoParaOsCantos.concat(movimentosQueVaoParaBorda).concat(MovimentosQueVaoParaSegundaCasaApartirDaBordas).concat(movimentosQueVaoParaOCentro);
-    return jogadasPossiveisOrdenadasPelasPeriferias;
+    const jogadasPossiveis = jogadasBorda.concat(jogadasSegundacasaApartirdaBorda).concat(jogadasCentro)
+    return jogadasPossiveis
+}
+
+function coletarBordasDoTabuleiro(possibilidades, tamanhoTabuleiro) {
+    let bordas = []
+    for (let index = 0; index < possibilidades.length; index++) {
+        const element = possibilidades[index];
+        const coletandoDiagonalSuperior = element[0] < 2 | element[1] < 2
+        const coletandoDiagonalInferior = element[0] > tamanhoTabuleiro - 1 | element[1] > tamanhoTabuleiro - 1
+        if (coletandoDiagonalSuperior | coletandoDiagonalInferior) {
+            bordas.push(element)
+        }
+    }
+    return bordas
+}
+
+function coletarSegundaCasaApartirDaBordaDoTabuleiro(possibilidades, tamanhoTabuleiro) {
+    let bordas = []
+    for (let index = 0; index < possibilidades.length; index++) {
+        const element = possibilidades[index];
+        const coletandoDiagonalSuperior = element[0] < 3 | element[1] < 3
+        const coletandoDiagonalInferior = element[0] > tamanhoTabuleiro - 2 | element[1] > tamanhoTabuleiro - 2
+        if (coletandoDiagonalSuperior | coletandoDiagonalInferior) {
+            bordas.push(element)
+        }
+    }
+    return bordas
 }
