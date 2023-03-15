@@ -1,18 +1,18 @@
-const notacaoInicial = "a4";
-const casa = converteNotacaoInicialEmNumero(notacaoInicial);
-const result = [];
+const notacaoInicial = "d4";
+const casaInicial = converteNotacao(notacaoInicial);
+const resultado = [];
 const tamanhoTabuleiro = 8
-const possibilidades = montarPossibilidadesDoTabuleiro(tamanhoTabuleiro);
+const possibilidades = possibilidadesTabuleiro(tamanhoTabuleiro);
 const possibilidadesBordaTabuleiro = coletarBordasDoTabuleiro(possibilidades, tamanhoTabuleiro)
 const possibilidadesSegundaCasaApartirDaBordaTabuleiro = coletarSegundaCasaApartirDaBordaDoTabuleiro(possibilidades, tamanhoTabuleiro)
-movimentos(casa, possibilidades, result);
-novoMovimento(casa, possibilidades, result);
-for (let index = 0; index < result.length; index++) {
-    const notacaoNumerica = result[index];
-    console.log(converteNotacaoInicialEmNumero(notacaoNumerica));
+contabilizandoMovimento(casaInicial, possibilidades, resultado);
+main(casaInicial, possibilidades, resultado);
+for (let index = 0; index < resultado.length; index++) {
+    const notacaoNumerica = resultado[index];
+    console.log(converteNotacao(notacaoNumerica));
 }
 
-function converteNotacaoInicialEmNumero(notacaoInicial) {
+function converteNotacao(notacaoInicial) {
     const letrasDeReferenciaDasCasas = ["a", "b", "c", "d", "e", "f", "g", "h"];
     if (typeof notacaoInicial === "string") {
         const notacaoEmNumeros = notacaoInicial.split("");
@@ -29,48 +29,48 @@ function converteNotacaoInicialEmNumero(notacaoInicial) {
     }
 }
 
-function montarPossibilidadesDoTabuleiro(tamanho) {
-    const numbers = [];
+function possibilidadesTabuleiro(tamanho) {
+    const colunas = [];
     for (let index = tamanho; index > 0; index--) {
-        numbers.push(index);
+        colunas.push(index);
     }
-    const tabuleiro = [];
-    for (let i = 0; i < numbers.length; i++) {
-        const linha = numbers[i];
-        for (let j = numbers.length - 1; j >= 0; j--) {
-            const coluna = numbers[j];
-            tabuleiro.push([linha, coluna]);
+    const possibilidadesDoTabuleiro = [];
+    for (let i = 0; i < colunas.length; i++) {
+        const linha = colunas[i];
+        for (let j = colunas.length - 1; j >= 0; j--) {
+            const coluna = colunas[j];
+            possibilidadesDoTabuleiro.push([linha, coluna]);
         }
     }
-    return tabuleiro;
+    return possibilidadesDoTabuleiro;
 }
 
-function movimentos(novaCasa, possibilidades, result) {
-    const corte = possibilidades.findIndex(
+function contabilizandoMovimento(novaCasa, possibilidades, result) {
+    const antigaCasa = possibilidades.findIndex(
         (element) => element[0] === novaCasa[0] && element[1] === novaCasa[1]
     );
-    result.push(possibilidades[corte]);
-    if (corte < possibilidades.length - 1) {
-        possibilidades[corte] = possibilidades.pop();
+    result.push(possibilidades[antigaCasa]);
+    if (antigaCasa < possibilidades.length - 1) {
+        possibilidades[antigaCasa] = possibilidades.pop();
     } else {
         possibilidades.pop();
     }
 }
 
-function movimentosReverso(novaCasa, possibilidades, result) {
-    possibilidades.push(result.pop());
-    novaCasa = result[result.length - 1];
+function reverteUltimoMovimento(novaCasa, possibilidades, resultado) {
+    possibilidades.push(resultado.pop());
+    novaCasa = resultado[resultado.length - 1];
 }
 
-function novoMovimento(casa, possibilidades) {
-    const jogadasAprimorado = coletaJogadasPossiveisIniciandoPelasBordas(casa, possibilidades, possibilidadesBordaTabuleiro, possibilidadesSegundaCasaApartirDaBordaTabuleiro)
-    for (let index = 0; index < jogadasAprimorado.length; index++) {
-        const jogada = jogadasAprimorado[index];
-        const novaCasa = [casa[0] + jogada[0], casa[1] + jogada[1]];
-        movimentos(novaCasa, possibilidades, result);
-        novoMovimento(novaCasa, possibilidades, result);
+function main(casaAtual, possibilidades) {
+    const jogadasPossiveis = coletaJogadasPossiveisIniciandoPelasBordas(casaAtual, possibilidades, possibilidadesBordaTabuleiro, possibilidadesSegundaCasaApartirDaBordaTabuleiro)
+    for (let index = 0; index < jogadasPossiveis.length; index++) {
+        const jogada = jogadasPossiveis[index];
+        const novaCasa = [casaAtual[0] + jogada[0], casaAtual[1] + jogada[1]];
+        contabilizandoMovimento(novaCasa, possibilidades, resultado);
+        main(novaCasa, possibilidades, resultado);
         if (possibilidades.length > 0) {
-            movimentosReverso(novaCasa, possibilidades, result);
+            reverteUltimoMovimento(novaCasa, possibilidades, resultado);
         } else {
             return;
         }
@@ -79,7 +79,7 @@ function novoMovimento(casa, possibilidades) {
 }
 
 function coletaJogadasPossiveisIniciandoPelasBordas(casa, possibilidades, possibilidadesBordaTabuleiro) {
-    const jogadas = [
+    const movimentosPossiveisParaOCavalo = [
         [2, 1],
         [2, -1],
         [1, 2],
@@ -92,8 +92,8 @@ function coletaJogadasPossiveisIniciandoPelasBordas(casa, possibilidades, possib
     let jogadasBorda = []
     let jogadasCentro = []
     let jogadasSegundacasaApartirdaBorda = []
-    for (let i = 0; i < jogadas.length; i++) {
-        const jogada = jogadas[i];
+    for (let i = 0; i < movimentosPossiveisParaOCavalo.length; i++) {
+        const jogada = movimentosPossiveisParaOCavalo[i];
         const alvoCentro = [casa[0] + jogada[0], casa[1] + jogada[1]];
         const indexBorda = possibilidadesBordaTabuleiro.findIndex((element) => element[0] === alvoCentro[0] && element[1] === alvoCentro[1]);
         const indexSegundaCasaApartirBorda = possibilidadesSegundaCasaApartirDaBordaTabuleiro.findIndex((element) => element[0] === alvoCentro[0] && element[1] === alvoCentro[1]);
