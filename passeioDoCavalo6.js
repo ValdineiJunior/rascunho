@@ -68,7 +68,7 @@ function main(casaAtual, possibilidades) {
         const novaCasa = [casaAtual[0] + jogada[0], casaAtual[1] + jogada[1]];
         contabilizaMovimento(novaCasa, possibilidades, resultado);
         main(novaCasa, possibilidades, resultado);
-        if (possibilidades.length > 60) {
+        if (possibilidades.length > 0) {
             reverteUltimoMovimento(novaCasa, possibilidades, resultado);
         } else {
             return;
@@ -77,7 +77,7 @@ function main(casaAtual, possibilidades) {
 }
 
 function coletaMovimentosPossiveis(casaAtual, possibilidades) {
-    //Essa e a funcao mais importante que coleta os movimentos ordenando pelos que geram menas possibilidades futuramente.
+    // Essa e a funcao mais importante que coleta os movimentos ordenando pelos que geram menas possibilidades futuramente.
     const possibilidadesCantos = [[1, 1], [8, 8], [1, 8], [8, 1]];
     const possibilidadesBordaTabuleiro = coletarBordasDoTabuleiro(possibilidades, tamanhoTabuleiro, 1);
     const possibilidadesSegundaCasaApartirDaBordaTabuleiro = coletarBordasDoTabuleiro(possibilidades, tamanhoTabuleiro, 2);
