@@ -14,8 +14,13 @@ for (let index = 0; index < numero_entrada.length; index++) {
   }
   // console.log("element: ",element,"baseElevada",baseElevada)
   elementoNaBaseDez = arrayBases.findIndex((char => char === element))
-  numeroNaBaseDez += element * baseElevada
+  numeroNaBaseDez += elementoNaBaseDez * baseElevada
   expoente--
+}
+
+let result = ''
+while (numeroNaBaseDez > 0) {
+  numeroNaBaseDez
 }
 console.log(numeroNaBaseDez)
 // numeroNaBaseDez = 1 * 2^3 + 0 * 2^2 + 1 * 2^1 + 1 * 2^0
