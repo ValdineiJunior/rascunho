@@ -29,8 +29,9 @@ function handleBigBase(baseEntrada, baseSaida, numeroEntrada) {
     for (let index = 0; index < numeroEntrada.length; index++) {
         const element = numeroEntrada[index];
         const digitoPertenceABase = digitosValidosParaBaseExpecifica.includes(element);
-        if (digitoPertenceABase === -1) {
+        if (!digitoPertenceABase) {
             numeroInvalidoParaBaseExpecifica = true;
+            break
         }
     }
     
@@ -41,11 +42,12 @@ function handleBigBase(baseEntrada, baseSaida, numeroEntrada) {
     const limit = BigInt(
         transformandoParaDecimal("62", "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
     );
+    
     if (numeroNaBaseDez > limit) {
         return console.log("???");
     }
     let result = "";
-    if (numeroNaBaseDez === 0) {
+    if (numeroNaBaseDez === 0n) {
         return console.log("0");
     }
     while (numeroNaBaseDez > 0) {
@@ -74,3 +76,5 @@ function transformandoParaDecimal(baseEntrada, numeroEntrada) {
     }
     return numeroNaBaseDez;
 }
+
+console.log("01".length)
