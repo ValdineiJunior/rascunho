@@ -2,7 +2,7 @@ const file = process.argv[2];
 if (!file) {
     console.log('Você precisa fornecer um arquivo como argumento, utilize o arquivo teste "baseconv.txt"');
     process.exit(1);
-  }
+}
 const readline = require("readline");
 const fs = require("fs");
 
@@ -15,66 +15,62 @@ myInterface.on("line", function (line) {
 });
 
 function readBigBase(element) {
-    const numeros = element.split(" ").splice(0, 3);
-    return handleBigBase(numeros[0], numeros[1], numeros[2]);
+    const numbers = element.split(" ").splice(0, 3);
+    return handleBigBase(numbers[0], numbers[1], numbers[2]);
 }
 
-const bases = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-function handleBigBase(baseEntrada, baseSaida, numeroEntrada) {
-    const basesInvalida =
-        baseEntrada < 2 || baseEntrada > 62 || baseSaida < 2 || baseSaida > 62;
-    const numeroNegativo = parseInt(numeroEntrada) < 0;
-    let numeroInvalidoParaBaseExpecifica = false;
-    const digitosValidosParaBaseExpecifica = [...bases.slice(0, baseEntrada)];
-    for (let index = 0; index < numeroEntrada.length; index++) {
-        const element = numeroEntrada[index];
-        const digitoPertenceABase = digitosValidosParaBaseExpecifica.includes(element);
-        if (!digitoPertenceABase) {
-            numeroInvalidoParaBaseExpecifica = true;
-            break
+const base = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+function handleBigBase(inputBase, outputBase, entryNumber) {
+    const invalidBases =
+        inputBase < 2 || inputBase > 62 || outputBase < 2 || outputBase > 62;
+    const negativeNumber = parseInt(entryNumber) < 0;
+    let InvalidNumberForInputBase = false;
+    const ValidDigitsForInputBase = [...base.slice(0, inputBase)];
+    for (let index = 0; index < entryNumber.length; index++) {
+        const element = entryNumber[index];
+        const digitBelongsToBase = ValidDigitsForInputBase.includes(element);
+        if (!digitBelongsToBase) {
+            InvalidNumberForInputBase = true;
+            break;
         }
     }
-    
-    if (basesInvalida || numeroNegativo || numeroInvalidoParaBaseExpecifica) {
+    if (invalidBases || negativeNumber || InvalidNumberForInputBase) {
         return console.log("???");
     }
-    let numeroNaBaseDez = transformandoParaDecimal(baseEntrada, numeroEntrada);
+    let numberInBaseTen = convertingToDecimal(inputBase, entryNumber);
     const limit = BigInt(
-        transformandoParaDecimal("62", "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
+        convertingToDecimal("62", "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
     );
-    
-    if (numeroNaBaseDez > limit) {
+    if (numberInBaseTen > limit) {
         return console.log("???");
     }
     let result = "";
-    if (numeroNaBaseDez === 0n) {
+    if (numberInBaseTen === 0n) {
         return console.log("0");
     }
-    while (numeroNaBaseDez > 0) {
-        const resto = numeroNaBaseDez % BigInt(baseSaida);
-        result = bases[resto] + result;
-        numeroNaBaseDez = (numeroNaBaseDez - resto) / BigInt(baseSaida);
+    while (numberInBaseTen > 0) {
+        const remainder = numberInBaseTen % BigInt(outputBase);
+        result = base[remainder] + result;
+        numberInBaseTen = (numberInBaseTen - remainder) / BigInt(outputBase);
     }
     return console.log(result);
 }
 
-function transformandoParaDecimal(baseEntrada, numeroEntrada) {
-    const arrayBases = bases.split("");
-    let numeroNaBaseDez = 0n;
-    let expoente = BigInt(numeroEntrada.length - 1);
-    for (let index = 0; index < numeroEntrada.length; index++) {
-        const element = numeroEntrada[index];
-        let baseElevada = 1n;
-        for (let j = 0; j < expoente; j++) {
-            baseElevada *= BigInt(baseEntrada);
+function convertingToDecimal(inputBase, entryNumber) {
+    const arrayBase = base.split("");
+    let numberInBaseTen = 0n;
+    let exponent = BigInt(entryNumber.length - 1);
+    for (let index = 0; index < entryNumber.length; index++) {
+        const element = entryNumber[index];
+        let exponentiatedBase = 1n;
+        for (let j = 0; j < exponent; j++) {
+            exponentiatedBase *= BigInt(inputBase);
         }
-        const elementoNaBaseDez = BigInt(
-            arrayBases.findIndex((char) => char === element)
+        const elementInBaseTen = BigInt(
+            arrayBase.findIndex((char) => char === element)
         );
-        numeroNaBaseDez += elementoNaBaseDez * baseElevada;
-        expoente--;
+        numberInBaseTen += elementInBaseTen * exponentiatedBase;
+        exponent--;
     }
-    return numeroNaBaseDez;
+    return numberInBaseTen;
 }
-
-console.log("01".length)
