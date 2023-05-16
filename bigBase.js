@@ -1,3 +1,4 @@
+const base = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 const file = process.argv[2];
 if (!file) {
     console.log('Você precisa fornecer um arquivo como argumento, utilize o arquivo teste "baseconv.txt"');
@@ -11,18 +12,26 @@ const myInterface = readline.createInterface({
 });
 
 myInterface.on("line", function (line) {
-    return readBigBase(line);
+    return console.log(readBigBase(line));
 });
 
 function readBigBase(element) {
     const numbers = element.split(" ").splice(0, 3);
-    return handleBigBase(numbers[0], numbers[1], numbers[2]);
+    const inputBase = numbers[0];
+    const outputBase = numbers[1];
+    const entryNumber = numbers[2];
+    const response = checksIfTheInputIsValid(inputBase, outputBase, entryNumber);
+    if (response === "valid") {
+        const numberInBaseTen = convertToDecimal(inputBase, entryNumber);
+        return convertDecimalToBaseOutput(outputBase, numberInBaseTen);
+    } else return response;
 }
 
-const base = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-function handleBigBase(inputBase, outputBase, entryNumber) {
+function checksIfTheInputIsValid(inputBase, outputBase, entryNumber) {
+    const maxBase = 62;
+    const minBase = 2;
     const invalidBases =
-        inputBase < 2 || inputBase > 62 || outputBase < 2 || outputBase > 62;
+        inputBase < minBase || inputBase > maxBase || outputBase < minBase || outputBase > maxBase;
     const negativeNumber = parseInt(entryNumber) < 0;
     let InvalidNumberForInputBase = false;
     const ValidDigitsForInputBase = [...base.slice(0, inputBase)];
@@ -35,28 +44,32 @@ function handleBigBase(inputBase, outputBase, entryNumber) {
         }
     }
     if (invalidBases || negativeNumber || InvalidNumberForInputBase) {
-        return console.log("???");
+        return "???";
     }
-    let numberInBaseTen = convertingToDecimal(inputBase, entryNumber);
+    const numberInBaseTen = convertToDecimal(inputBase, entryNumber);
     const limit = BigInt(
-        convertingToDecimal("62", "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
+        convertToDecimal(maxBase, "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")
     );
     if (numberInBaseTen > limit) {
-        return console.log("???");
+        return "???";
     }
-    let result = "";
     if (numberInBaseTen === 0n) {
-        return console.log("0");
+        return "0";
     }
+    return "valid";
+}
+
+function convertDecimalToBaseOutput(outputBase, numberInBaseTen) {
+    let result = "";
     while (numberInBaseTen > 0) {
         const remainder = numberInBaseTen % BigInt(outputBase);
         result = base[remainder] + result;
         numberInBaseTen = (numberInBaseTen - remainder) / BigInt(outputBase);
     }
-    return console.log(result);
+    return result;
 }
 
-function convertingToDecimal(inputBase, entryNumber) {
+function convertToDecimal(inputBase, entryNumber) {
     const arrayBase = base.split("");
     let numberInBaseTen = 0n;
     let exponent = BigInt(entryNumber.length - 1);
