@@ -27,8 +27,8 @@ function countLines(filePath) {
 
 function getLines(filePath, startLine, endLine) {
   return new Promise((resolve, reject) => {
-    const lines = [];
-    let currentLine = 0;
+    let lines = [];
+    let lineCount = 0;
 
     const stream = fs.createReadStream(filePath);
     const rl = readline.createInterface({
@@ -37,8 +37,8 @@ function getLines(filePath, startLine, endLine) {
     });
 
     rl.on('line', (line) => {
-      currentLine++;
-      if (currentLine >= startLine && currentLine <= endLine) {
+      lineCount++;
+      if (lineCount >= startLine && lineCount <= endLine) {
         lines.push(line);
       }
     });
@@ -53,29 +53,25 @@ function getLines(filePath, startLine, endLine) {
   });
 }
 
-function reverseLines(lines) {
-  return lines.reverse();
-}
+async function printLines(filePath, lineCount) {
+  const batchSize = 1000000; // Define o tamanho do lote para impressão
 
-async function printLinesRecursive(filePath, startLine, endLine) {
-  if (startLine <= 0) {
-    return;
-  }
-
-  try {
-    const lines = await getLines(filePath, startLine, endLine);
-    const reversedLines = reverseLines(lines);
-    console.log(reversedLines.join('\n'));
-    await printLinesRecursive(filePath, startLine - 100, endLine - 100);
-  } catch (error) {
-    console.error('Error:', error);
+  for (let start = lineCount; start > 0; start -= batchSize) {
+    const end = Math.max(start - batchSize + 1, 1);
+    try {
+      const lines = await getLines(filePath, end, start);
+      lines.reverse(); // Inverte as linhas para manter a ordem correta
+      console.log(lines.join('\n')); // Imprime as linhas juntas
+    } catch (error) {
+      console.error('Error:', error);
+    }
   }
 }
 
 async function processFile(filePath) {
   try {
     const lineCount = await countLines(filePath);
-    await printLinesRecursive(filePath, lineCount, lineCount);
+    await printLines(filePath, lineCount);
   } catch (error) {
     console.error('Error:', error);
   }
