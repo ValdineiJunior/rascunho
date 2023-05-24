@@ -1,33 +1,86 @@
 const fs = require('fs');
+const readline = require('readline');
 
-if (process.argv.length < 3) {
-  console.log('É necessário fornecer o nome do arquivo como parâmetro.');
-  console.log('Exemplo: node unixTac.js mini1GB.txt');
+function countLines(filePath) {
+  return new Promise((resolve, reject) => {
+    let lineCount = 0;
+
+    const stream = fs.createReadStream(filePath);
+    const rl = readline.createInterface({
+      input: stream,
+      crlfDelay: Infinity
+    });
+
+    rl.on('line', () => {
+      lineCount++;
+    });
+
+    rl.on('close', () => {
+      resolve(lineCount);
+    });
+
+    stream.on('error', (error) => {
+      reject(error);
+    });
+  });
+}
+
+function getLine(filePath, lineNumber) {
+  return new Promise((resolve, reject) => {
+    let lineCount = 0;
+    let desiredLine = null;
+
+    const stream = fs.createReadStream(filePath);
+    const rl = readline.createInterface({
+      input: stream,
+      crlfDelay: Infinity
+    });
+
+    rl.on('line', (line) => {
+      lineCount++;
+      if (lineCount === lineNumber) {
+        desiredLine = line;
+      }
+    });
+
+    rl.on('close', () => {
+      resolve(desiredLine);
+    });
+
+    stream.on('error', (error) => {
+      reject(error);
+    });
+  });
+}
+
+async function printLinesRecursive(filePath, lineNumber) {
+  if (lineNumber <= 0) {
+    return;
+  }
+
+  try {
+    const desiredLine = await getLine(filePath, lineNumber);
+    console.log(desiredLine);
+    await printLinesRecursive(filePath, lineNumber - 1);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+async function processFile(filePath) {
+  try {
+    const lineCount = await countLines(filePath);
+    await printLinesRecursive(filePath, lineCount);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+// Verifica se o arquivo foi passado como argumento na linha de comando
+const filePath = process.argv[2];
+if (!filePath) {
+  console.error('Error: File path not provided.');
   process.exit(1);
 }
-let count = 0
-const inputFile = process.argv[2];
 
-const stream = fs.createReadStream(inputFile, { encoding: 'utf8' });
-
-stream.on('data', (chunk) => {
-  const lines = chunk.split(/\n(?!\r)/);
-  const lastLines = lines.slice(-101);
-  const firstLines = lines.slice(0, -101);
-
-  for (let i = lastLines.length - 1; i >= 0; i--) {
-    count++
-    console.log(firstLines[i]);
-  }
-
-  for (let i = firstLines.length - 1; i >= 0; i--) {
-    count++
-    console.log(firstLines[i]);
-  }
-  console.log(count)
-});
-
-stream.on('error', (error) => {
-  console.error('Ocorreu um erro ao ler o arquivo:', error);
-});
-
+processFile(filePath);

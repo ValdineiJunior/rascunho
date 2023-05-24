@@ -1,38 +1,86 @@
-// Implemente o comando tac na sua linguagem e bibliotecas preferidas.
-// O programa deve ler arquivos de qualquer tamanho e funcionar com um limite de 512MB de memória.
-//
-// pacote npm | npm i readline-specific
-// $ node --max-old-space-size=512 desafio-07 1GB.txt
-//
-const fs = require("fs");
-const inputFile = process.argv[2];
-let lineCount = 1; // 1GB.txt - 13147026 linhas
-let i;
-let firstLog = true;
+const fs = require('fs');
+const readline = require('readline');
 
-const stream = fs.createReadStream(inputFile);
-stream.on("data", chunk => {
-    for (i = 0; i < chunk.length; ++i) {
-		if (chunk[i] == 10) {lineCount++;}
-	}
-})
-.on("end", () => loop());
+function countLines(filePath) {
+  return new Promise((resolve, reject) => {
+    let lineCount = 0;
 
-const loop = () => {if (lineCount > 0) {readLine();}};
+    const stream = fs.createReadStream(filePath);
+    const rl = readline.createInterface({
+      input: stream,
+      crlfDelay: Infinity
+    });
 
-const rl = require("readline-specific");
-const readLine = () => {
-	rl.oneline(inputFile, lineCount, function(err, line) {
-		if (err) {return console.error(err);}
-		if (firstLog) {
-			firstLog = false;
-			process.stdout.write(line);
-			lineCount--;
-			loop();
-		} else {
-			console.log(line);
-			lineCount--;
-			loop();
-		}
-	});
-};
+    rl.on('line', () => {
+      lineCount++;
+    });
+
+    rl.on('close', () => {
+      resolve(lineCount);
+    });
+
+    stream.on('error', (error) => {
+      reject(error);
+    });
+  });
+}
+
+function getLine(filePath, lineNumber) {
+  return new Promise((resolve, reject) => {
+    let lineCount = 0;
+    let desiredLine = null;
+
+    const stream = fs.createReadStream(filePath);
+    const rl = readline.createInterface({
+      input: stream,
+      crlfDelay: Infinity
+    });
+
+    rl.on('line', (line) => {
+      lineCount++;
+      if (lineCount === lineNumber) {
+        desiredLine = line;
+      }
+    });
+
+    rl.on('close', () => {
+      resolve(desiredLine);
+    });
+
+    stream.on('error', (error) => {
+      reject(error);
+    });
+  });
+}
+
+async function printLinesRecursive(filePath, lineNumber) {
+  if (lineNumber <= 0) {
+    return;
+  }
+
+  try {
+    const desiredLine = await getLine(filePath, lineNumber);
+    console.log(desiredLine);
+    await printLinesRecursive(filePath, lineNumber - 1);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+async function processFile(filePath) {
+  try {
+    const lineCount = await countLines(filePath);
+    await printLinesRecursive(filePath, lineCount);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+// Verifica se o arquivo foi passado como argumento na linha de comando
+const filePath = process.argv[2];
+if (!filePath) {
+  console.error('Error: File path not provided.');
+  process.exit(1);
+}
+
+processFile(filePath);

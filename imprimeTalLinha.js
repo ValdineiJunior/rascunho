@@ -53,7 +53,12 @@ function getLine(filePath, lineNumber) {
   });
 }
 
-const filePath = '1GB.txt';
+// Verifica se o arquivo foi passado como argumento na linha de comando
+const filePath = process.argv[2];
+if (!filePath) {
+  console.error('Error: File path not provided.');
+  process.exit(1);
+}
 
 countLines(filePath)
   .then((lineCount) => {
@@ -77,4 +82,3 @@ countLines(filePath)
   .catch((error) => {
     console.error('Error:', error);
   });
-
