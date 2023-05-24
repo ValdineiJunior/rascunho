@@ -27,7 +27,7 @@ function countLines(filePath) {
 
 function getLine(filePath, lineNumber) {
   return new Promise((resolve, reject) => {
-    let lineCount = 0;
+    let linesForPrinting = 0;
     let desiredLine = null;
 
     const stream = fs.createReadStream(filePath);
@@ -37,8 +37,8 @@ function getLine(filePath, lineNumber) {
     });
 
     rl.on('line', (line) => {
-      lineCount++;
-      if (lineCount === lineNumber) {
+      linesForPrinting++;
+      if (linesForPrinting === lineNumber) {
         desiredLine = line;
       }
     });
@@ -79,7 +79,7 @@ async function processFile(filePath) {
 // Verifica se o arquivo foi passado como argumento na linha de comando
 const filePath = process.argv[2];
 if (!filePath) {
-  console.error('Error: File path not provided.');
+  console.error('Error: File path not provided. To run the program correctly, use "node unixTac.js 1GB.txt". You can replace 1GB.txt with any txt file you like.');
   process.exit(1);
 }
 

@@ -25,10 +25,10 @@ function countLines(filePath) {
   });
 }
 
-function getLine(filePath, lineNumber) {
+function getLines(filePath, startLine, endLine) {
   return new Promise((resolve, reject) => {
-    let lineCount = 0;
-    let desiredLine = null;
+    const lines = [];
+    let currentLine = 0;
 
     const stream = fs.createReadStream(filePath);
     const rl = readline.createInterface({
@@ -37,14 +37,14 @@ function getLine(filePath, lineNumber) {
     });
 
     rl.on('line', (line) => {
-      lineCount++;
-      if (lineCount === lineNumber) {
-        desiredLine = line;
+      currentLine++;
+      if (currentLine >= startLine && currentLine <= endLine) {
+        lines.push(line);
       }
     });
 
     rl.on('close', () => {
-      resolve(desiredLine);
+      resolve(lines);
     });
 
     stream.on('error', (error) => {
@@ -53,15 +53,20 @@ function getLine(filePath, lineNumber) {
   });
 }
 
-async function printLinesRecursive(filePath, lineNumber) {
-  if (lineNumber <= 0) {
+function reverseLines(lines) {
+  return lines.reverse();
+}
+
+async function printLinesRecursive(filePath, startLine, endLine) {
+  if (startLine <= 0) {
     return;
   }
 
   try {
-    const desiredLine = await getLine(filePath, lineNumber);
-    console.log(desiredLine);
-    await printLinesRecursive(filePath, lineNumber - 1);
+    const lines = await getLines(filePath, startLine, endLine);
+    const reversedLines = reverseLines(lines);
+    console.log(reversedLines.join('\n'));
+    await printLinesRecursive(filePath, startLine - 100, endLine - 100);
   } catch (error) {
     console.error('Error:', error);
   }
@@ -70,7 +75,7 @@ async function printLinesRecursive(filePath, lineNumber) {
 async function processFile(filePath) {
   try {
     const lineCount = await countLines(filePath);
-    await printLinesRecursive(filePath, lineCount);
+    await printLinesRecursive(filePath, lineCount, lineCount);
   } catch (error) {
     console.error('Error:', error);
   }
@@ -79,7 +84,7 @@ async function processFile(filePath) {
 // Verifica se o arquivo foi passado como argumento na linha de comando
 const filePath = process.argv[2];
 if (!filePath) {
-  console.error('Error: File path not provided.');
+  console.error('Error: File path not provided. To run the program correctly, use "node unixTac.js 1GB.txt". You can replace 1GB.txt with any txt file you like.');
   process.exit(1);
 }
 
