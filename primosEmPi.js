@@ -66,7 +66,7 @@ function coletaMaiorSubstringComPrimosSequenciais(pi, indicesAusenciaPrimos) {
     return pi.slice(inicio, fim + 4);
 }
 
-const arquivoPi = "minipi-1M.txt";
+const arquivoPi = "pi-1M.txt";
 const pi = fs.readFileSync(arquivoPi, "utf-8").slice(2);
 const primos = obterNumerosPrimos(primeiroPrimo, ultimoPrimo);
 const indicesAusenciaPrimos = coletaIndicesAusenciaPrimosSequenciais(pi);
