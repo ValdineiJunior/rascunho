@@ -2,74 +2,64 @@ const fs = require("fs");
 
 const primeiroPrimo = 2;
 const ultimoPrimo = 9973;
+const arquivoPi = "pi-1M.txt";
 
-function obterNumerosPrimos(primoInicial, primoFinal) {
-    let primos = [];
-    for (let numero = primoInicial; numero <= primoFinal; numero++) {
-        let ehPrimo = true;
-        for (let i = 2; i <= Math.sqrt(numero); i++) {
-            if (numero % i === 0) {
-                ehPrimo = false;
-                break;
-            }
-        }
-        if (ehPrimo) {
-            primos.push(numero);
+let numerosPrimos;
+let digitosPi;
+let maiorDasSequencias = "";
+
+function isPrimo(numero) {
+    if (numero === 2) {
+        return true;
+    }
+    if (numero < 2 || numero % 2 === 0) {
+        return false;
+    }
+    for (let i = 3; i <= Math.sqrt(numero); i += 2) {
+        if (numero % i === 0) {
+            return false;
         }
     }
+    return true;
+}
 
+function obterNumerosPrimos(primoInicial, primoFinal) {
+    const primos = new Set();
+    for (let numero = primoInicial; numero <= primoFinal; numero++) {
+        if (isPrimo(numero)) {
+            primos.add(numero);
+        }
+    }
     return primos;
 }
 
-function verificaSeTemAlgumPrimo(digitos, primos) {
-    for (let i = 0; i < primos.length; i++) {
-        const primo = primos[i];
-        if (digitos.includes(primo)) {
-            return true;
+function coletarMaiorSequencia(indexDeInicio, sequenciaAtual) {
+    let digito = "";
+    let sequenciaAtualizada = "";
+    let numero = 0;
+
+    for (let i = indexDeInicio; i < indexDeInicio + 4 && i < digitosPi.length; i++) {
+        digito += digitosPi[i];
+        numero = parseInt(digito);
+      
+        if (numerosPrimos.has(numero)) {
+            sequenciaAtualizada = sequenciaAtual + digito;
+            coletarMaiorSequencia(i + 1, sequenciaAtualizada);
         }
     }
-    return false;
-}
-
-function coletaIndicesAusenciaPrimosSequenciais(pi) {
-    const indicesAusenciaPrimos = [];
-    for (let i = 0; i < pi.length - 3; i++) {
-        const quatroDigitos = pi.slice(i, i + 4);
-        const contemUmPrimo = verificaSeTemAlgumPrimo(quatroDigitos, primos);
-
-        if (!contemUmPrimo) {
-            indicesAusenciaPrimos.push(i);
-        }
+      
+    if (sequenciaAtualizada.length > maiorDasSequencias.length) {
+        maiorDasSequencias = sequenciaAtualizada;
     }
-
-    return indicesAusenciaPrimos;
 }
 
-function coletaMaiorSubstringComPrimosSequenciais(pi, indicesAusenciaPrimos) {
-    indicesAusenciaPrimos.unshift(0);
-    indicesAusenciaPrimos.push(pi.length - 4);
-    let maiorDistancia = 0;
-    let inicio = 0;
-    let fim = 0;
-    for (let i = 0; i < indicesAusenciaPrimos.length - 1; i++) {
-        const indiceAtual = indicesAusenciaPrimos[i];
-        const indiceSeguinte = indicesAusenciaPrimos[i + 1];
-        const distancia = indiceSeguinte - indiceAtual;
+pi = fs.readFileSync(arquivoPi, "utf-8").slice(2);
+digitosPi = pi.split("").map(Number);
+numerosPrimos = obterNumerosPrimos(primeiroPrimo, ultimoPrimo);
 
-        if (distancia > maiorDistancia) {
-            maiorDistancia = distancia;
-            inicio = indiceAtual;
-            fim = indiceSeguinte;
-        }
-    }
-
-    return pi.slice(inicio, fim + 4);
+for (let index = 0; index < digitosPi.length; index++) {
+    const sequenciaInicial = '';
+    coletarMaiorSequencia(index, sequenciaInicial);
 }
 
-const arquivoPi = "pi-1M.txt";
-const pi = fs.readFileSync(arquivoPi, "utf-8").slice(2);
-const primos = obterNumerosPrimos(primeiroPrimo, ultimoPrimo);
-const indicesAusenciaPrimos = coletaIndicesAusenciaPrimosSequenciais(pi);
-const substringDePi = coletaMaiorSubstringComPrimosSequenciais(pi, indicesAusenciaPrimos);
-
-console.log(substringDePi);
+console.log(maiorDasSequencias);
