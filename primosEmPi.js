@@ -1,12 +1,9 @@
 const fs = require("fs");
-
-const primeiroPrimo = 2;
-const ultimoPrimo = 9973;
-const arquivoPi = "pi-1M.txt";
-
-let numerosPrimos;
-let digitosPi;
-let maiorDasSequencias = "";
+const filePath = process.argv[2];
+if (!filePath) {
+    console.error("Erro: Caminho do arquivo não fornecido. Utilize 'node primosEmPi.js pi-1M.txt'");
+    process.exit(1);
+}
 
 function isPrimo(numero) {
     if (numero === 2) {
@@ -15,8 +12,9 @@ function isPrimo(numero) {
     if (numero < 2 || numero % 2 === 0) {
         return false;
     }
-    for (let i = 3; i <= Math.sqrt(numero); i += 2) {
-        if (numero % i === 0) {
+    const raizQuadradaDoNumero = Math.sqrt(numero);
+    for (let index = 3; index <= raizQuadradaDoNumero; index += 2) {
+        if (numero % index === 0) {
             return false;
         }
     }
@@ -33,32 +31,36 @@ function obterNumerosPrimos(primoInicial, primoFinal) {
     return primos;
 }
 
-function coletarMaiorSequencia(indexDeInicio, sequenciaAtual) {
-    let digito = "";
+function coletarMaiorSequencia(indexDeInicio, sequenciaDeDigitosAtuais) {
+    let digitosAdcionais = "";
     let sequenciaAtualizada = "";
-    let numero = 0;
-
-    for (let i = indexDeInicio; i < indexDeInicio + 4 && i < digitosPi.length; i++) {
-        digito += digitosPi[i];
-        numero = parseInt(digito);
-      
-        if (numerosPrimos.has(numero)) {
-            sequenciaAtualizada = sequenciaAtual + digito;
+    for (let i = indexDeInicio; i < indexDeInicio + 4 && i < arrayComNumerosdosDigitosEmPi.length; i++) {
+        digitosAdcionais += arrayComNumerosdosDigitosEmPi[i];
+        const recorteDeNumeros = parseInt(digitosAdcionais);
+        const recortePertenceAosprimos = numerosPrimos.has(recorteDeNumeros);
+        if (recortePertenceAosprimos) {
+            sequenciaAtualizada = sequenciaDeDigitosAtuais + digitosAdcionais;
             coletarMaiorSequencia(i + 1, sequenciaAtualizada);
         }
     }
-      
     if (sequenciaAtualizada.length > maiorDasSequencias.length) {
         maiorDasSequencias = sequenciaAtualizada;
     }
 }
 
-pi = fs.readFileSync(arquivoPi, "utf-8").slice(2);
-digitosPi = pi.split("").map(Number);
-numerosPrimos = obterNumerosPrimos(primeiroPrimo, ultimoPrimo);
-
-for (let index = 0; index < digitosPi.length; index++) {
-    const sequenciaInicial = '';
+const PrimeirasUmMilhaoDeCasasDecimaisEmPi = fs.readFileSync(filePath, "utf-8").slice(2);
+const arrayComNumerosdosDigitosEmPi = PrimeirasUmMilhaoDeCasasDecimaisEmPi.split("").map(Number);
+const primeiroPrimo = 2;
+const ultimoPrimo = 9973;
+const numerosPrimos = obterNumerosPrimos(primeiroPrimo, ultimoPrimo);
+let maiorDasSequencias = "";
+for (let index = 0; index < arrayComNumerosdosDigitosEmPi.length; index++) {
+    const digitosQueFaltamSerProcessados = arrayComNumerosdosDigitosEmPi.length - index;
+    const linhasQueFaltamSerProcessadasEmenorQuemaiorDasSequenciasJaEncontrada = maiorDasSequencias.length > digitosQueFaltamSerProcessados;
+    if (linhasQueFaltamSerProcessadasEmenorQuemaiorDasSequenciasJaEncontrada) {
+        break;
+    }
+    const sequenciaInicial = "";
     coletarMaiorSequencia(index, sequenciaInicial);
 }
 
