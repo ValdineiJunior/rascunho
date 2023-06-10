@@ -1,31 +1,45 @@
 const fs = require('fs');
 
-if (process.argv.length !== 4) {
-  console.error('Por favor, insira dois arquivos como argumentos.');
-  process.exit(1);
+function processFile(filename) {
+  const fileData = fs.readFileSync(filename, 'utf8');
+  const lines = fileData.split('\n');
+  lines.pop()
+
+  for (const line of lines) {
+    const [rules, input] = line.split(',');
+    turningMachine(rules, input);
+  }
 }
 
-const file1 = process.argv[2];
-const file2 = process.argv[3];
+function turningMachine(rules, input) {
+  // Lê o arquivo linha a linha
+  const fileLines = fs.readFileSync(rules, 'utf-8').split('\n');
 
-// Função para ler um arquivo e retornar seu conteúdo como uma Promise
-function readFilePromise(filename) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(filename, 'utf8', (err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(data);
-      }
+  // Filtra as linhas vazias e as que começam com ";", e separa os campos
+  const filteredLines = fileLines
+    .filter(line => line.trim() !== '' && !line.startsWith(';'))
+    .map(line => {
+      // Descarta tudo após ";"
+      const lineWithoutComments = line.split(';')[0].trim();
+
+      // Separa os campos pelos espaços em branco
+      const [current_state, current_symbol, new_symbol, direction, new_state] = lineWithoutComments.split(' ');
+
+      return { current_state, current_symbol, new_symbol, direction, new_state };
     });
-  });
+
+  // Faça algo com as linhas filtradas e os campos separados
+  arrayRules = [[]]
+  for (const line of filteredLines) {
+    const { current_state, current_symbol, new_symbol, direction, new_state } = line;
+    // ... faça algo com cada variável separada
+    arrayRules.push([current_state, current_symbol, new_symbol, direction, new_state])
+    // console.log(current_state, current_symbol, new_symbol, direction, new_state);
+  }
+  console.table(arrayRules)
+
+  // Resto da lógica da turningMachine...
 }
 
-// Lê os dois arquivos
-Promise.all([readFilePromise(file1), readFilePromise(file2)])
-  .then(([content1, content2]) => {
-    console.log(file1)
-  })
-  .catch((err) => {
-    console.error('Erro ao ler os arquivos:', err);
-  });
+const filename = process.argv[2];
+processFile(filename);
