@@ -24,22 +24,23 @@ function turningMachine(rules, input) {
 
       // Separa os campos pelos espaços em branco
       const [current_state, current_symbol, new_symbol, direction, new_state] = lineWithoutComments.split(' ');
-
       return { current_state, current_symbol, new_symbol, direction, new_state };
     });
 
-  // Faça algo com as linhas filtradas e os campos separados
   arrayRules = [[]]
   for (const line of filteredLines) {
     const { current_state, current_symbol, new_symbol, direction, new_state } = line;
-    // ... faça algo com cada variável separada
     arrayRules.push([current_state, current_symbol, new_symbol, direction, new_state])
-    // console.log(current_state, current_symbol, new_symbol, direction, new_state);
   }
   console.table(arrayRules)
-
-  // Resto da lógica da turningMachine...
 }
 
 const filename = process.argv[2];
+
+if (!filename) {
+  console.log('Nenhum argumento foi passado.');
+  console.log('Exemplo de uso: node turingMachine.js datafile');
+  process.exit(1);
+}
+
 processFile(filename);
