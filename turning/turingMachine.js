@@ -33,14 +33,9 @@ function turningMachine(rules, input) {
     arrayRules.push([current_state, current_symbol, new_symbol, direction, new_state])
   }
   console.table(arrayRules)
+
+  // Resto da lógica da turningMachine...
 }
 
 const filename = process.argv[2];
-
-if (!filename) {
-  console.log('Nenhum argumento foi passado.');
-  console.log('Exemplo de uso: node turingMachine.js datafile');
-  process.exit(1);
-}
-
 processFile(filename);
