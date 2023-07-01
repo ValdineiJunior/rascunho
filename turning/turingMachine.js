@@ -72,25 +72,13 @@ function turningMachine(rules, arrayRules, input) {
 function findPair(state, symbol, rules) {
     for (let i = 0; i < rules.length; i++) {
         if (rules[i].currentState === state && rules[i].currentSymbol === symbol) {
-            return {
-                currentState: rules[i].currentState,
-                currentSymbol: rules[i].currentSymbol,
-                newSymbol: rules[i].newSymbol,
-                direction: rules[i].direction,
-                newState: rules[i].newState
-            };
+            return { ...rules[i] };
         }
     }
 
     for (let i = 0; i < rules.length; i++) {
         if ((rules[i].currentState === state || rules[i].currentState === "*") && (rules[i].currentSymbol === symbol || rules[i].currentSymbol === "*")) {
-            return {
-                currentState: rules[i].currentState,
-                currentSymbol: rules[i].currentSymbol,
-                newSymbol: rules[i].newSymbol,
-                direction: rules[i].direction,
-                newState: rules[i].newState
-            };
+            return { ...rules[i] };
         }
     }
 
