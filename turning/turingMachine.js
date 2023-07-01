@@ -12,87 +12,90 @@ function processFile(filename) {
 
     for (const line of lines) {
         const [rules, input] = line.split(",");
-        turningMachine(rules, input);
+        const arrayRules = filteredRules(rules, input);
+        turningMachine(rules, arrayRules, input);
     }
 }
 
-function turningMachine(rules, input) {
-    // Lê o arquivo linha a linha
+function filteredRules(rules) {
     const fileLines = fs.readFileSync(rules, "utf-8").split("\n");
-
-    // Filtra as linhas vazias e as que começam com ";", e separa os campos
     const filteredLines = fileLines
         .filter(line => line.trim() !== "" && !line.startsWith(";"))
         .map(line => {
-            // Descarta tudo após ";"
             const lineWithoutComments = line.split(";")[0].trim();
 
-            // Separa os campos pelos espaços em branco
             const [currentState, currentSymbol, newSymbol, direction, newState] = lineWithoutComments.split(" ");
             return { currentState, currentSymbol, newSymbol, direction, newState };
         });
 
-    const arrayRules = [[]];
-    for (const line of filteredLines) {
-        const { currentState, currentSymbol, newSymbol, direction, newState } = line;
-        arrayRules.push([currentState, currentSymbol, newSymbol, direction, newState]);
-    }
-    const tape = input.split("");
+    return filteredLines;
+}
+
+function turningMachine(rules, arrayRules, input) {
+    const tape = (input.replace(" ", "_").split(""));
     let currentState = "0";
     let tapePosition = 0;
     let contador = 0;
     while (true) {
         contador++;
         const currentSymbol = tape[tapePosition];
-        // console.log(tape)
         const result = findPair(currentState, currentSymbol, arrayRules);
         if (result == null) {
-            console.log(`${rules},${input},ERR`); // Regra não encontrada, imprimir "ERR"
+            console.log(`${rules},${input},ERR`);
             return;
         }
 
-        if (result[2] !== "*") {
-            tape[tapePosition] = result[2];
+        if (result.newSymbol !== "*") {
+            tape[tapePosition] = result.newSymbol;
         }
 
-        if (result[4].slice(0, 4) === "halt") {
-            console.log(`${rules},${input},${tape.join("").replace(/_/g, " ").trim()}`); // Finalizar e imprimir a fita
+        if (result.newState.slice(0, 4) === "halt") {
+            console.log(`${rules},${input},${tape.join("").replace(/_/g, " ").trim()}`);
             return;
         }
-        if (result[3] === "r") {
+        if (result.direction === "r") {
             tapePosition++;
             if (tapePosition >= tape.length) {
-                tape.push("_"); // Adicionar espaço em branco caso a posição exceda o tamanho atual da fita
+                tape.push("_");
             }
-        } else if (result[3] === "l") {
+        } else if (result.direction === "l") {
             tapePosition--;
             if (tapePosition < 0) {
-                tape.unshift("_"); // Adicionar espaço em branco caso a posição seja menor que 0
+                tape.unshift("_");
                 tapePosition = 0;
             }
         }
-        currentState = result[4];
+        currentState = result.newState;
     }
 }
 
-function findPair(state, symbol, arrayRules) {
-    // console.log("state",state)
-    // console.log("symbol:",symbol)
-    // console.log(arrayRules)
-    for (let i = 0; i < arrayRules.length; i++) {
-        if (arrayRules[i][0] === state && arrayRules[i][1] === symbol) {
-            return arrayRules[i];
+function findPair(state, symbol, rules) {
+    for (let i = 0; i < rules.length; i++) {
+        if (rules[i].currentState === state && rules[i].currentSymbol === symbol) {
+            return {
+                currentState: rules[i].currentState,
+                currentSymbol: rules[i].currentSymbol,
+                newSymbol: rules[i].newSymbol,
+                direction: rules[i].direction,
+                newState: rules[i].newState
+            };
         }
     }
 
-    for (let i = 0; i < arrayRules.length; i++) {
-        if ((arrayRules[i][0] === state || arrayRules[i][0] === "*") && (arrayRules[i][1] === symbol || arrayRules[i][1] === "*")) {
-            return arrayRules[i];
+    for (let i = 0; i < rules.length; i++) {
+        if ((rules[i].currentState === state || rules[i].currentState === "*") && (rules[i].currentSymbol === symbol || rules[i].currentSymbol === "*")) {
+            return {
+                currentState: rules[i].currentState,
+                currentSymbol: rules[i].currentSymbol,
+                newSymbol: rules[i].newSymbol,
+                direction: rules[i].direction,
+                newState: rules[i].newState
+            };
         }
     }
 
-    return null; // Pair not found
-};
+    return null;
+}
 
 const filename = process.argv[2];
 
