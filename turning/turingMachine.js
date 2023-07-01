@@ -49,9 +49,9 @@ function turningMachine(rules, input) {
     if (result[2] !== '*') {
       tape[tapePosition] = result[2];
     }
-    
+
     if (result[4].slice(0,4) === 'halt') {
-      console.log(`${rules},${input},${tape.join('').replace(/_/g, "")}`); // Finalizar e imprimir a fita
+      console.log(`${rules},${input},${tape.join('').replace(/_/g, " ").trim()}`); // Finalizar e imprimir a fita
       return;
     }
     if (result[3] === 'r') {
